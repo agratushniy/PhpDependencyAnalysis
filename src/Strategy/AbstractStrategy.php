@@ -23,14 +23,13 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Strategy;
 
-use PhpDA\Command\Config;
 use PhpDA\Command\MessageInterface as Message;
+use PhpDA\Config;
 use PhpDA\Layout;
 use PhpDA\Parser\AnalyzerInterface;
 use PhpDA\Parser\Filter\NamespaceFilterInterface;
-use PhpDA\Plugin\ConfigurableInterface;
 use PhpDA\Plugin\LoaderInterface;
 use PhpDA\Reference\ValidatorInterface;
 use PhpDA\Writer\AdapterInterface;
@@ -39,10 +38,7 @@ use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 
-/**
- * @SuppressWarnings("PMD.CouplingBetweenObjects")
- */
-abstract class AbstractStrategy implements ConfigurableInterface, StrategyInterface
+abstract class AbstractStrategy implements StrategyInterface
 {
     /** @var Config */
     private $config;
@@ -175,7 +171,7 @@ abstract class AbstractStrategy implements ConfigurableInterface, StrategyInterf
         return $this->graphBuilder;
     }
 
-    public function execute()
+    public function execute(): bool
     {
         if ($this->fileCnt < 1) {
             $this->getOutput()->writeln(Message::NOTHING_TO_PARSE . PHP_EOL);

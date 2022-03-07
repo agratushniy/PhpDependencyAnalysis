@@ -87,7 +87,7 @@ class Logger extends AbstractLogger
         return ucfirst($level);
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         if (!isset($this->entries[$level])) {
             $this->entries[$level] = [];

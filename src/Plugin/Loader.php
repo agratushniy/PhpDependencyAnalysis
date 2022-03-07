@@ -33,7 +33,7 @@ class Loader implements LoaderInterface, LoggerAwareInterface
     /** @var LoggerInterface */
     private $logger;
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }

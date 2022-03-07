@@ -23,12 +23,34 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Strategy;
 
-interface StrategyInterface
+class Usage extends AbstractStrategy
 {
-    /**
-     * @return boolean
-     */
-    public function execute();
+    protected function init()
+    {
+        $this->initNodeTraverser();
+    }
+
+    private function initNodeTraverser()
+    {
+        $requiredVisitors = [
+            'PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector',
+            'PhpDA\Parser\Visitor\Required\MetaNamespaceCollector',
+            'PhpDA\Parser\Visitor\Required\UsedNamespaceCollector',
+        ];
+
+        $nodeTraverser = $this->getAnalyzer()->getNodeTraverser();
+        $nodeTraverser->setRequiredVisitors($requiredVisitors);
+        $nodeTraverser->bindVisitors(
+            $this->getConfig()->getVisitor(),
+            $this->getConfig()->getVisitorOptions()
+        );
+    }
+
+    public function execute(): bool
+    {
+        // TODO: Implement execute() method.
+        return true;
+    }
 }

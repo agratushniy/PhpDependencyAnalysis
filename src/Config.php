@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command;
+namespace PhpDA;
 
 use PhpDA\Parser\Filter\NodeName;
 

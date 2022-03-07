@@ -84,7 +84,7 @@ class NameResolver extends PhpParserNameResolver implements LoggerAwareInterface
         $this->docBlockFactory = DocBlockFactory::createInstance();
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }

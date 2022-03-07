@@ -26,10 +26,11 @@
 namespace PhpDA\Command;
 
 use PhpDA\Command\MessageInterface as Message;
-use PhpDA\Command\Strategy\StrategyInterface;
 use PhpDA\Plugin\LoaderInterface;
+use PhpDA\Strategy\StrategyInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,20 +58,13 @@ class Analyze extends Command
     /** @var LoaderInterface */
     private $strategyLoader;
 
-    /**
-     * @param Parser $parser
-     */
-    public function setConfigParser(Parser $parser)
-    {
-        $this->configParser = $parser;
-    }
+    private iterable $strategies;
 
-    /**
-     * @param LoaderInterface $loader
-     */
-    public function setStrategyLoader(LoaderInterface $loader)
+    public function __construct(iterable $strategies)
     {
-        $this->strategyLoader = $loader;
+        parent::__construct('analyze');
+        $strategies = $strategies instanceof \Traversable ? iterator_to_array($strategies) : $strategies;
+        $this->strategies = $strategies;
     }
 
     protected function configure()
@@ -78,8 +72,6 @@ class Analyze extends Command
         if (strpos($this->defaultConfigFilePath, '://') === false) {
             $this->defaultConfigFilePath = realpath($this->defaultConfigFilePath);
         }
-
-        $this->setName('Analyze');
 
         $this->addArgument(
             'config',
@@ -99,25 +91,36 @@ class Analyze extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $config = $this->createConfigBy($input);
-            $this->addClassMapToClassLoaderFrom($config);
+            //$config = $this->createConfigBy($input);
             $this->addLogLevelFormatsTo($output);
-            $label = Message::NAME . ' ' . Version::read();
+            //$label = Message::NAME . ' ' . Version::read();
 
-            $output->writeln($label . PHP_EOL);
+            //$output->writeln($label . PHP_EOL);
             $output->writeln(sprintf(Message::READ_CONFIG_FROM, $this->configFilePath) . PHP_EOL);
 
-            $strategyOptions = [
+            /*$strategyOptions = [
                 'config'      => $config,
                 'output'      => $output,
                 'layoutLabel' => $label,
-            ];
+            ];*/
+            $strategyMode = 'usage';
 
-            if ($this->loadStrategy($config->getMode(), $strategyOptions)->execute()) {
+            if (!isset($this->strategies[$strategyMode])) {
+                throw new InvalidArgumentException('Invalid strategy');
+            }
+
+            /**
+             * @var StrategyInterface $strategy
+             */
+            $strategy = $this->strategies[$strategyMode];
+            $strategy->execute();
+
+            return Command::SUCCESS;
+            /*if ($this->loadStrategy($config->getMode(), $strategyOptions)->execute()) {
                 return self::EXIT_SUCCESS;
             } else {
                 return self::EXIT_VIOLATION;
-            }
+            }*/
         } catch (\Throwable $e) {
             throw new \Exception('Execution failed', self::EXIT_EXCEPTION, $e);
         }
@@ -229,13 +232,6 @@ class Analyze extends Command
         return dirname($this->configFilePath) . DIRECTORY_SEPARATOR . $path;
     }
 
-    /**
-     * @param Config $config
-     */
-    private function addClassMapToClassLoaderFrom(Config $config)
-    {
-        ApplicationFactory::$classLoader->addClassMap($config->getClassMap());
-    }
 
     /**
      * @param string $type
