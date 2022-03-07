@@ -1,8 +1,8 @@
 {
-    "name": "mamuz/php-dependency-analysis",
+    "name": "agratushniy/php-dependency-analysis",
     "type": "project",
-    "description": "Static code analysis to find violations in a dependency graph",
-    "homepage": "https://github.com/mamuz/PhpDependencyAnalysis",
+    "description": "forked from mamuz/PhpDependencyAnalysis",
+    "homepage": "https://github.com/agratushniy/PhpDependencyAnalysis",
     "license": "MIT",
     "keywords": [
         "phpda",
@@ -17,17 +17,12 @@
             "email": "mamuz.de@gmail.com"
         }
     ],
-    "support": {
-        "issues": "https://github.com/mamuz/PhpDependencyAnalysis/issues",
-        "source": "https://github.com/mamuz/PhpDependencyAnalysis"
-    },
     "config": {
         "optimize-autoloader": true
     },
-    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.3",
+        "php": "^7.4",
         "ext-json": "*",
         "psr/log": "~1.0",
         "nikic/php-parser": "~4.0",
