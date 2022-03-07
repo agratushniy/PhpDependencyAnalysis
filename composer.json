@@ -31,14 +31,14 @@
         "graphp/graphviz": "~0.2.0",
         "phpdocumentor/reflection-docblock": "~4.0",
         "doctrine/collections": "~1.0",
-        "symfony/yaml": "~4.2",
-        "symfony/console": "~4.2",
-        "symfony/finder": "~4.2"
+        "symfony/yaml": "5.4",
+        "symfony/console": "5.4",
+        "symfony/finder": "5.4"
     },
     "require-dev": {
         "ext-simplexml": "*",
         "mockery/mockery": "~1.2",
-        "codeception/codeception": "^2.5"
+        "codeception/codeception": "4.1"
     },
     "autoload": {
         "psr-4": {
