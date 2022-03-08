@@ -33,7 +33,7 @@ use PhpDA\Entity\Adt;
 use PhpDA\Entity\AnalysisCollection;
 use PhpDA\Entity\Location;
 use PhpDA\Layout\Helper\CycleDetector;
-use PhpDA\Layout\Helper\GroupGenerator;
+use PhpDA\Mutator\GroupGenerator;
 use PhpDA\Reference\ValidatorInterface;
 use PhpParser\Node\Name;
 use Symfony\Component\Finder\SplFileInfo;
@@ -143,11 +143,11 @@ class Builder implements BuilderInterface
     public function create()
     {
         $this->createDependencies();
-        $this->detectCycles();
-        $this->bindLayoutTo($this->getGraph(), $this->layout->getGraph(), 'graphviz.graph.');
-        $this->getGraph()->setAttribute('graphviz.groups', $this->groupGenerator->getGroups());
-        $this->getGraph()->setAttribute('graphviz.groupLayout', $this->layout->getGroup());
-        $this->getGraph()->setAttribute('logEntries', $this->logEntries);
+        //$this->detectCycles();
+        //$this->bindLayoutTo($this->getGraph(), $this->layout->getGraph(), 'graphviz.graph.');
+        //$this->getGraph()->setAttribute('graphviz.groups', $this->groupGenerator->getGroups());
+        //$this->getGraph()->setAttribute('graphviz.groupLayout', $this->layout->getGroup());
+        //$this->getGraph()->setAttribute('logEntries', $this->logEntries);
 
         return $this;
     }

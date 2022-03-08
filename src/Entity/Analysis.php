@@ -29,32 +29,21 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class Analysis
 {
-    /** @var SplFileInfo */
-    private $file;
-
-    /** @var Adt[] */
-    private $adts = [];
+    private array $adts = [];
 
     /**
      * @param SplFileInfo $file
      */
-    public function __construct(SplFileInfo $file)
+    public function __construct(private SplFileInfo $file)
     {
-        $this->file = $file;
     }
 
-    /**
-     * @return SplFileInfo
-     */
-    public function getFile()
+    public function getFile(): SplFileInfo
     {
         return $this->file;
     }
 
-    /**
-     * @return Adt
-     */
-    public function createAdt()
+    public function createAdt(): Adt
     {
         $adt = new Adt;
         $this->adts[] = $adt;
@@ -65,7 +54,7 @@ class Analysis
     /**
      * @return Adt[]
      */
-    public function getAdts()
+    public function getAdts(): array
     {
         return $this->adts;
     }

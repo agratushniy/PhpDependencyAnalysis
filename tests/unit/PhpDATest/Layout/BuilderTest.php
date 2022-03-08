@@ -56,7 +56,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     /** @var Builder */
     protected $fixture;
 
-    /** @var \PhpDA\Layout\Helper\GroupGenerator | \Mockery\MockInterface */
+    /** @var \PhpDA\Mutator\GroupGenerator | \Mockery\MockInterface */
     protected $groupGenerator;
 
     /** @var \PhpDA\Layout\Helper\CycleDetector | \Mockery\MockInterface */
@@ -76,7 +76,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->groupGenerator = \Mockery::mock('PhpDA\Layout\Helper\GroupGenerator');
+        $this->groupGenerator = \Mockery::mock('PhpDA\Mutator\GroupGenerator');
         $this->graph = \Mockery::mock('Fhaculty\Graph\Graph');
         $this->cycleDetector = \Mockery::mock('PhpDA\Layout\Helper\CycleDetector');
         $this->cycleDetector->shouldReceive('inspect')->with($this->graph)->andReturnSelf();

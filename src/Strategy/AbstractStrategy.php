@@ -26,15 +26,19 @@
 namespace PhpDA\Strategy;
 
 use Fhaculty\Graph\Graph;
+use Fhaculty\Graph\Vertex;
 use PhpDA\Command\MessageInterface as Message;
 use PhpDA\Config;
+use PhpDA\GraphBuilder;
 use PhpDA\HasOutputInterface;
 use PhpDA\Layout;
+use PhpDA\Mutator\GraphMutatorInterface;
 use PhpDA\Parser\AnalyzerInterface;
 use PhpDA\Parser\Filter\NamespaceFilterInterface;
 use PhpDA\Plugin\LoaderInterface;
 use PhpDA\Reference\ValidatorInterface;
 use PhpDA\Writer\AdapterInterface;
+use PhpParser\Node\Name;
 use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\NullOutput;
@@ -57,36 +61,19 @@ abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
     /** @var AdapterInterface */
     private $writeAdapter;
 
-    /** @var Layout\BuilderInterface */
-    private $graphBuilder;
-
-    /** @var LoaderInterface */
-    private $pluginLoader;
-
     /** @var string */
     private $layoutLabel = '';
 
-    /**
-     * @param Finder                  $finder
-     * @param AnalyzerInterface       $analyzer
-     * @param Layout\BuilderInterface $graphBuilder
-     * @param AdapterInterface        $writeAdapter
-     * @param LoaderInterface         $loader
-     */
     public function __construct(
         protected array $visitors,
         protected Finder $finder,
         protected AnalyzerInterface $analyzer,
-        Layout\BuilderInterface $graphBuilder,
+        protected GraphBuilder $graphBuilder,
         AdapterInterface $writeAdapter,
-        LoaderInterface $loader,
-        protected array $options
+        protected array $options,
+        protected iterable $graphMutators
     ) {
-        $this->graphBuilder = $graphBuilder;
         $this->writeAdapter = $writeAdapter;
-        $this->pluginLoader = $loader;
-
-
         $this->output = new NullOutput();
     }
 
@@ -143,14 +130,6 @@ abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
         return $this->writeAdapter;
     }
 
-    /**
-     * @return Layout\BuilderInterface
-     */
-    protected function getGraphBuilder()
-    {
-        return $this->graphBuilder;
-    }
-
     public function execute(): bool
     {
         $this->initFinder();
@@ -169,12 +148,24 @@ abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
         $this->iterateFiles($progressHelper);
         $progressHelper->finish();
 
-        $this->writeAnalysis();
+        //Исходный граф зависимостей
+        $graph = $this->graphBuilder->build($this->analyzer->getAnalysisCollection());
+
+        //Мутация графа через цепочку обязанностей
+        foreach ($this->graphMutators as $graphMutator) {
+            /**
+             * @var GraphMutatorInterface $graphMutator
+             */
+            $graphMutator->mutate($graph);
+        }
+
+        //Мутированный граф передаем в распаковщик (json, svg ...)
+        #$this->writeAnalysis();
         $this->getOutput()->writeln(PHP_EOL . Message::DONE . PHP_EOL);
 
-        $this->writeAnalysisFailures();
+        #$this->writeAnalysisFailures();
 
-        return $this->analyzer->getLogger()->isEmpty() && !$this->getGraphBuilder()->hasViolations();
+        return $this->analyzer->getLogger()->isEmpty() && !$this->graphBuilder->hasViolations();
     }
 
     /**
@@ -219,10 +210,7 @@ abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
              ->to('phpda.svg');
     }
 
-    /**
-     * @return Graph
-     */
-    private function createGraph()
+    private function createGraph(): Graph
     {
         /*if ($this->getConfig()->hasVisitorOptionsForAggregation()) {
             $layout = new Layout\Aggregation($this->layoutLabel);
@@ -230,19 +218,19 @@ abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
             $layout = new Layout\Standard($this->layoutLabel);
         }*/
 
-        $layout = new Layout\Standard($this->layoutLabel);
+        //$layout = new Layout\Standard($this->layoutLabel);
 
-        $graphBuilder = $this->getGraphBuilder();
-        $graphBuilder->setLogEntries($this->analyzer->getLogger()->getEntries());
-        $graphBuilder->setLayout($layout);
-        $graphBuilder->setGroupLength($this->options['groupLength']);
-        $graphBuilder->setAnalysisCollection($this->analyzer->getAnalysisCollection());
+
+        //$this->graphBuilder->setLogEntries($this->analyzer->getLogger()->getEntries());
+        //$this->graphBuilder->setLayout($layout);
+        //$this->graphBuilder->setGroupLength($this->options['groupLength']);
+        $this->graphBuilder->setAnalysisCollection($this->analyzer->getAnalysisCollection());
 
         /*if ($referenceValidator = $this->loadReferenceValidator()) {
             $graphBuilder->setReferenceValidator($referenceValidator);
         }*/
 
-        return $graphBuilder->create()->getGraph();
+        return $this->graphBuilder->create()->getGraph();
     }
 
     /**

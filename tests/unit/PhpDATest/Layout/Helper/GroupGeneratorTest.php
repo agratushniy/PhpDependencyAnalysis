@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Layout\Helper;
 
-use PhpDA\Layout\Helper\GroupGenerator;
+use PhpDA\Mutator\GroupGenerator;
 
 class GroupGeneratorTest extends \PHPUnit_Framework_TestCase
 {

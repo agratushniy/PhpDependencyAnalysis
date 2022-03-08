@@ -23,17 +23,19 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Layout\Helper;
+namespace PhpDA\Mutator;
 
+use Fhaculty\Graph\Graph;
+use Fhaculty\Graph\Vertex;
 use PhpParser\Node\Name;
 
-class GroupGenerator
+class GroupGenerator implements GraphMutatorInterface
 {
     /** @var array */
     private $groups = [];
 
     /** @var int */
-    private $groupLength = 0;
+    private $groupLength = 2;
 
     /**
      * @param int $groupLength
@@ -107,5 +109,16 @@ class GroupGenerator
     private function searchIdFor($group)
     {
         return array_search($group, $this->groups);
+    }
+
+    public function mutate(Graph $graph): void
+    {
+        foreach ($graph->getVertices() as $vertex) {
+            /**
+             * @var Vertex $vertex
+             */
+            $groupId = $this->getIdFor(new Name($vertex->getId()));
+            $vertex->setGroup($groupId);
+        }
     }
 }
