@@ -32,27 +32,14 @@ use PhpParser\NodeVisitor;
 
 class NodeTraverser extends \PhpParser\NodeTraverser implements AdtAwareInterface
 {
-    /** @var Adt|null */
-    private $adt;
+    private ?Adt $adt;
 
-    /** @var array */
-    private $requiredVisitors = [];
-
-    /** @var LoaderInterface */
-    private $visitorLoader;
-
-    /**
-     * @param Adt $adt
-     */
     public function setAdt(Adt $adt)
     {
         $this->adt = $adt;
     }
 
-    /**
-     * @return Adt|null
-     */
-    public function getAdt()
+    public function getAdt(): ?Adt
     {
         return $this->adt;
     }
@@ -60,114 +47,9 @@ class NodeTraverser extends \PhpParser\NodeTraverser implements AdtAwareInterfac
     /**
      * @return bool
      */
-    public function hasAdt()
+    public function hasAdt(): bool
     {
-        return $this->adt instanceof Adt;
-    }
-
-    /**
-     * @param LoaderInterface $visitorLoader
-     */
-    public function setVisitorLoader(LoaderInterface $visitorLoader)
-    {
-        $this->visitorLoader = $visitorLoader;
-    }
-
-    /**
-     * @return LoaderInterface
-     * @throws \DomainException
-     */
-    public function getVisitorLoader()
-    {
-        if (!$this->visitorLoader instanceof LoaderInterface) {
-            throw new \DomainException('VisitorLoader has not been set');
-        }
-
-        return $this->visitorLoader;
-    }
-
-    /**
-     * @param array $requiredVisitors
-     * @return NodeTraverser
-     */
-    public function setRequiredVisitors(array $requiredVisitors)
-    {
-        $this->requiredVisitors = $requiredVisitors;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRequiredVisitors()
-    {
-        return $this->requiredVisitors;
-    }
-
-    public function bindVisitors(array $visitors, array $options = null)
-    {
-        $visitors = $this->filterVisitors($visitors);
-        $options = $this->filterOptions($options);
-
-        foreach ($visitors as $fqcn) {
-            $visitorOptions = isset($options[$fqcn]) ? (array) $options[$fqcn] : null;
-            $this->addVisitor($this->loadVisitorBy($fqcn, $visitorOptions));
-        }
-    }
-
-    /**
-     * @param array $visitors
-     * @return array
-     */
-    private function filterVisitors(array $visitors)
-    {
-        $fqcns = $this->getRequiredVisitors();
-
-        foreach ($visitors as $fqcn) {
-            $fqcn = trim($fqcn, '\\');
-            if (!in_array($fqcn, $fqcns)) {
-                $fqcns[] = $fqcn;
-            }
-        }
-
-        return $fqcns;
-    }
-
-    /**
-     * @param array|null $options
-     * @return array|null
-     */
-    private function filterOptions(array $options = null)
-    {
-        if (is_array($options)) {
-            $filtered = [];
-            foreach ($options as $key => $value) {
-                $key = trim($key, '\\');
-                $filtered[$key] = $value;
-            }
-            $options = $filtered;
-        }
-
-        return $options;
-    }
-
-    /**
-     * @param string     $fqcn
-     * @param array|null $options
-     * @throws \RuntimeException
-     * @return NodeVisitor
-     */
-    private function loadVisitorBy($fqcn, array $options = null)
-    {
-        $visitor = $this->getVisitorLoader()->get($fqcn, $options);
-
-        if (!$visitor instanceof NodeVisitor) {
-            throw new \RuntimeException(
-                sprintf('Visitor \'%s\' must be an instance of PhpParser\\NodeVisitor', $fqcn)
-            );
-        }
-
-        return $visitor;
+        return $this->adt != null;
     }
 
     public function traverse(array $nodes) : array

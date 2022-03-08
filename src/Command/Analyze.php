@@ -26,6 +26,8 @@
 namespace PhpDA\Command;
 
 use PhpDA\Command\MessageInterface as Message;
+use PhpDA\Config;
+use PhpDA\HasOutputInterface;
 use PhpDA\Plugin\LoaderInterface;
 use PhpDA\Strategy\StrategyInterface;
 use Psr\Log\LogLevel;
@@ -37,6 +39,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Parser;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 /**
  * @SuppressWarnings("PMD.CouplingBetweenObjects")
@@ -52,19 +56,14 @@ class Analyze extends Command
     /** @var string */
     private $configFilePath;
 
-    /** @var Parser */
-    private $configParser;
-
     /** @var LoaderInterface */
     private $strategyLoader;
 
-    private iterable $strategies;
-
-    public function __construct(iterable $strategies)
+    public function __construct(private iterable $strategies, private Parser $configParser)
     {
         parent::__construct('analyze');
-        $strategies = $strategies instanceof \Traversable ? iterator_to_array($strategies) : $strategies;
-        $this->strategies = $strategies;
+        $this->strategies = $strategies instanceof \Traversable ? iterator_to_array($strategies) : $strategies;
+
     }
 
     protected function configure()
@@ -113,6 +112,11 @@ class Analyze extends Command
              * @var StrategyInterface $strategy
              */
             $strategy = $this->strategies[$strategyMode];
+
+            if ($strategy instanceof HasOutputInterface) {
+                $strategy->setOutput($output);
+            }
+
             $strategy->execute();
 
             return Command::SUCCESS;

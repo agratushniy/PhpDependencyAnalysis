@@ -25,6 +25,7 @@
 
 namespace PhpDA\Parser\Visitor;
 
+use DomainException;
 use PhpDA\Entity\Adt;
 use PhpDA\Entity\AdtAwareInterface;
 use PhpDA\Parser\Filter;
@@ -32,41 +33,30 @@ use PhpDA\Parser\Visitor\Feature;
 use PhpDA\Plugin\ConfigurableInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
+use RuntimeException;
 
 /**
  * @SuppressWarnings("PMD.CouplingBetweenObjects")
  */
-abstract class AbstractVisitor extends NodeVisitorAbstract implements
-    AdtAwareInterface,
-    ConfigurableInterface
+abstract class AbstractVisitor extends NodeVisitorAbstract implements AdtAwareInterface, ConfigurableInterface
 {
-    /** @var Adt */
-    private $adt;
-
-    /** @var Filter\NodeNameInterface */
-    private $nodeNameFilter;
+    private ?Adt $adt = null;
+    private ?Filter\NodeNameInterface $nodeNameFilter = null;
 
     public function setOptions(array $options)
     {
         $this->getNodeNameFilter()->setOptions($options);
     }
 
-    /**
-     * @param Adt $adt
-     */
     public function setAdt(Adt $adt)
     {
         $this->adt = $adt;
     }
 
-    /**
-     * @return Adt
-     * @throws \DomainException
-     */
-    public function getAdt()
+    public function getAdt(): ?Adt
     {
         if (!$this->adt instanceof Adt) {
-            throw new \DomainException('Adt has not been set');
+            throw new DomainException('Adt has not been set');
         }
 
         return $this->adt;
@@ -80,10 +70,7 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
         $this->nodeNameFilter = $nodeNameFilter;
     }
 
-    /**
-     * @return Filter\NodeNameInterface
-     */
-    public function getNodeNameFilter()
+    public function getNodeNameFilter(): Filter\NodeNameInterface
     {
         if (!$this->nodeNameFilter instanceof Filter\NodeNameInterface) {
             $this->setNodeNameFilter(new Filter\NodeName);
@@ -104,13 +91,10 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
         }
     }
 
-    /**
-     * @param Node\Name $name
-     * @return null|Node\Name
-     */
-    protected function filter(Node\Name $name)
+    protected function filter(Node\Name $name): ?Node\Name
     {
         $raw = clone $name;
+
         if ($name = $this->getNodeNameFilter()->filter($name)) {
             $this->exchange($name, $raw);
         }
@@ -118,11 +102,7 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
         return $name;
     }
 
-    /**
-     * @param Node\Name $name
-     * @param Node|null $node
-     */
-    protected function collect(Node\Name $name, Node $node = null)
+    protected function collect(Node\Name $name, Node $node = null): void
     {
         if ($name = $this->filter($name)) {
             if (!is_null($node)) {
@@ -134,10 +114,9 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
     }
 
     /**
-     * @throws \RuntimeException
-     * @return string
+     * @throws RuntimeException
      */
-    private function getAdtMutator()
+    private function getAdtMutator(): string
     {
         if ($this->isDeclaredNamespaceCollector()) {
             return 'setDeclaredNamespace';
@@ -155,7 +134,7 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
             return 'addNamespacedString';
         }
 
-        throw new \RuntimeException(
+        throw new RuntimeException(
             sprintf(
                 'Visitor \'%s\' must implement '
                 . 'PhpDA\\Parser\\Visitor\Feature\\DeclaredNamespaceCollectorInterface'
@@ -167,34 +146,22 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements
         );
     }
 
-    /**
-     * @return bool
-     */
-    private function isDeclaredNamespaceCollector()
+    private function isDeclaredNamespaceCollector(): bool
     {
         return $this instanceof Feature\DeclaredNamespaceCollectorInterface;
     }
 
-    /**
-     * @return bool
-     */
-    private function isUsedNamespaceCollector()
+    private function isUsedNamespaceCollector(): bool
     {
         return $this instanceof Feature\UsedNamespaceCollectorInterface;
     }
 
-    /**
-     * @return bool
-     */
-    private function isUnsupportedNamespaceCollector()
+    private function isUnsupportedNamespaceCollector(): bool
     {
         return $this instanceof Feature\UnsupportedNamespaceCollectorInterface;
     }
 
-    /**
-     * @return bool
-     */
-    private function isNamespacedStringCollector()
+    private function isNamespacedStringCollector(): bool
     {
         return $this instanceof Feature\NamespacedStringCollectorInterface;
     }

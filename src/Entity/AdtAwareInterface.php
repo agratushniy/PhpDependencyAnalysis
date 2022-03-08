@@ -27,13 +27,7 @@ namespace PhpDA\Entity;
 
 interface AdtAwareInterface
 {
-    /**
-     * @param Adt $adt
-     */
     public function setAdt(Adt $adt);
 
-    /**
-     * @return Adt|null
-     */
-    public function getAdt();
+    public function getAdt(): ?Adt;
 }

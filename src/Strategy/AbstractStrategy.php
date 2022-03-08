@@ -25,20 +25,25 @@
 
 namespace PhpDA\Strategy;
 
+use Fhaculty\Graph\Graph;
 use PhpDA\Command\MessageInterface as Message;
 use PhpDA\Config;
+use PhpDA\HasOutputInterface;
 use PhpDA\Layout;
 use PhpDA\Parser\AnalyzerInterface;
 use PhpDA\Parser\Filter\NamespaceFilterInterface;
 use PhpDA\Plugin\LoaderInterface;
 use PhpDA\Reference\ValidatorInterface;
 use PhpDA\Writer\AdapterInterface;
+use RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
-abstract class AbstractStrategy implements StrategyInterface
+abstract class AbstractStrategy implements StrategyInterface, HasOutputInterface
 {
     /** @var Config */
     private $config;
@@ -46,14 +51,8 @@ abstract class AbstractStrategy implements StrategyInterface
     /** @var OutputInterface */
     private $output;
 
-    /** @var Finder */
-    private $finder;
-
     /** @var integer */
     private $fileCnt = 0;
-
-    /** @var AnalyzerInterface */
-    private $analyzer;
 
     /** @var AdapterInterface */
     private $writeAdapter;
@@ -75,61 +74,42 @@ abstract class AbstractStrategy implements StrategyInterface
      * @param LoaderInterface         $loader
      */
     public function __construct(
-        Finder $finder,
-        AnalyzerInterface $analyzer,
+        protected array $visitors,
+        protected Finder $finder,
+        protected AnalyzerInterface $analyzer,
         Layout\BuilderInterface $graphBuilder,
         AdapterInterface $writeAdapter,
-        LoaderInterface $loader
+        LoaderInterface $loader,
+        protected array $options
     ) {
-        $this->finder = $finder;
-        $this->analyzer = $analyzer;
         $this->graphBuilder = $graphBuilder;
         $this->writeAdapter = $writeAdapter;
         $this->pluginLoader = $loader;
 
-        $this->config = new Config([]);
-        $this->output = new NullOutput;
+
+        $this->output = new NullOutput();
     }
 
-    public function setOptions(array $options)
+    public function setOutput(OutputInterface $output): void
     {
-        if (isset($options['config']) && $options['config'] instanceof Config) {
-            $this->config = $options['config'];
-        }
-
-        if (isset($options['output']) && $options['output'] instanceof OutputInterface) {
-            $this->output = $options['output'];
-        }
-
-        if (isset($options['layoutLabel'])) {
-            $this->layoutLabel = (string) $options['layoutLabel'];
-        }
-
-        $this->initFinder();
+        $this->output = $output;
     }
 
     private function initFinder()
     {
         $this->getFinder()
              ->files()
-             ->name($this->getConfig()->getFilePattern())
-             ->in($this->getConfig()->getSource())
+             ->name($this->options['filePattern'])
+             ->in($this->options['source'])
              ->sortByName();
 
-        if ($ignores = $this->getConfig()->getIgnore()) {
+        if ($ignores = $this->options['ignore'] ?? null) {
             $this->getFinder()->exclude($ignores);
         }
 
         $this->fileCnt = $this->getFinder()->count();
     }
 
-    /**
-     * @return AnalyzerInterface
-     */
-    protected function getAnalyzer()
-    {
-        return $this->analyzer;
-    }
 
     /**
      * @return Config
@@ -173,16 +153,18 @@ abstract class AbstractStrategy implements StrategyInterface
 
     public function execute(): bool
     {
+        $this->initFinder();
+
         if ($this->fileCnt < 1) {
             $this->getOutput()->writeln(Message::NOTHING_TO_PARSE . PHP_EOL);
             return true;
         }
 
-        $this->bindNamespaceFilterToVisitorOptions();
-        $this->init();
+        //$this->bindNamespaceFilterToVisitorOptions();
+
+        $this->analyzer->setupVisitors($this->visitors);
 
         $progressHelper = $this->createProgressHelper();
-
         $progressHelper->start();
         $this->iterateFiles($progressHelper);
         $progressHelper->finish();
@@ -192,10 +174,8 @@ abstract class AbstractStrategy implements StrategyInterface
 
         $this->writeAnalysisFailures();
 
-        return $this->getAnalyzer()->getLogger()->isEmpty() && !$this->getGraphBuilder()->hasViolations();
+        return $this->analyzer->getLogger()->isEmpty() && !$this->getGraphBuilder()->hasViolations();
     }
-
-    abstract protected function init();
 
     /**
      * @return ProgressBar
@@ -212,19 +192,17 @@ abstract class AbstractStrategy implements StrategyInterface
         return $progress;
     }
 
-    /**
-     * @param ProgressBar $progressHelper
-     */
-    private function iterateFiles(ProgressBar $progressHelper)
+
+    private function iterateFiles(ProgressBar $progressHelper): void
     {
         foreach ($this->getFinder()->getIterator() as $file) {
-            /** @var \Symfony\Component\Finder\SplFileInfo $file */
+            /** @var SplFileInfo $file */
             if (OutputInterface::VERBOSITY_VERBOSE <= $this->getOutput()->getVerbosity()) {
                 $progressHelper->clear();
                 $this->getOutput()->writeln("\x0D" . $file->getRealPath());
                 $progressHelper->display();
             }
-            $this->getAnalyzer()->analyze($file);
+            $this->analyzer->analyze($file);
             $progressHelper->advance();
         }
     }
@@ -232,41 +210,43 @@ abstract class AbstractStrategy implements StrategyInterface
     private function writeAnalysis()
     {
         $this->getOutput()->writeln(
-            PHP_EOL . PHP_EOL . sprintf(Message::WRITE_GRAPH_TO, $this->getConfig()->getTarget())
+            PHP_EOL . PHP_EOL . sprintf(Message::WRITE_GRAPH_TO, $this->options['target'])
         );
 
         $this->getWriteAdapter()
              ->write($this->createGraph())
-             ->with($this->getConfig()->getFormatter())
-             ->to($this->getConfig()->getTarget());
+             ->with('PhpDA\Writer\Strategy\Svg')
+             ->to('phpda.svg');
     }
 
     /**
-     * @return \Fhaculty\Graph\Graph
+     * @return Graph
      */
     private function createGraph()
     {
-        if ($this->getConfig()->hasVisitorOptionsForAggregation()) {
+        /*if ($this->getConfig()->hasVisitorOptionsForAggregation()) {
             $layout = new Layout\Aggregation($this->layoutLabel);
         } else {
             $layout = new Layout\Standard($this->layoutLabel);
-        }
+        }*/
+
+        $layout = new Layout\Standard($this->layoutLabel);
 
         $graphBuilder = $this->getGraphBuilder();
-        $graphBuilder->setLogEntries($this->getAnalyzer()->getLogger()->getEntries());
+        $graphBuilder->setLogEntries($this->analyzer->getLogger()->getEntries());
         $graphBuilder->setLayout($layout);
-        $graphBuilder->setGroupLength($this->getConfig()->getGroupLength());
-        $graphBuilder->setAnalysisCollection($this->getAnalyzer()->getAnalysisCollection());
+        $graphBuilder->setGroupLength($this->options['groupLength']);
+        $graphBuilder->setAnalysisCollection($this->analyzer->getAnalysisCollection());
 
-        if ($referenceValidator = $this->loadReferenceValidator()) {
+        /*if ($referenceValidator = $this->loadReferenceValidator()) {
             $graphBuilder->setReferenceValidator($referenceValidator);
-        }
+        }*/
 
         return $graphBuilder->create()->getGraph();
     }
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      * @return ValidatorInterface|null
      */
     private function loadReferenceValidator()
@@ -276,7 +256,7 @@ abstract class AbstractStrategy implements StrategyInterface
         if ($fqcn = $this->getConfig()->getReferenceValidator()) {
             $referenceValidator = $this->pluginLoader->get($fqcn);
             if (!$referenceValidator instanceof ValidatorInterface) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('ReferenceValidator \'%s\' must implement PhpDA\\Reference\\ValidatorInterface', $fqcn)
                 );
             }
@@ -286,14 +266,14 @@ abstract class AbstractStrategy implements StrategyInterface
     }
 
     /**
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private function bindNamespaceFilterToVisitorOptions()
     {
         if ($fqcn = $this->getConfig()->getNamespaceFilter()) {
             $namespaceFilter = $this->pluginLoader->get($fqcn);
             if (!$namespaceFilter instanceof NamespaceFilterInterface) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf(
                         'NamespaceFilter \'%s\' must implement PhpDA\\Parser\\Filter\\NamespaceFilterInterface',
                         $fqcn
@@ -306,7 +286,7 @@ abstract class AbstractStrategy implements StrategyInterface
 
     private function writeAnalysisFailures()
     {
-        $logger = $this->getAnalyzer()->getLogger();
+        $logger = $this->analyzer->getLogger();
         if (!$logger->isEmpty()) {
             $this->getOutput()->writeln(Message::PARSE_LOGS);
             $this->getOutput()->writeln($logger->toString());

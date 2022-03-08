@@ -35,15 +35,12 @@ interface AnalyzerInterface
      */
     public function analyze(SplFileInfo $file);
 
+    public function setupVisitors(array $visitors): void;
+
     /**
      * @return \PhpDA\Entity\AnalysisCollection
      */
     public function getAnalysisCollection();
-
-    /**
-     * @return NodeTraverser
-     */
-    public function getNodeTraverser();
 
     /**
      * @return Logger

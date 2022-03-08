@@ -4,6 +4,7 @@
 use PhpDA\Container\RegisterConsoleCommandsPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Application;
+use Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
@@ -35,6 +36,7 @@ $container = new ContainerBuilder();
 $rootDir = __DIR__ . '/..';
 $loader = new PhpFileLoader($container, new FileLocator($rootDir));
 $loader->load($rootDir . '/container.php');
+$loader->load($rootDir . '/config.php');
 $container->addCompilerPass(new RegisterConsoleCommandsPass());
 $container->compile();
 

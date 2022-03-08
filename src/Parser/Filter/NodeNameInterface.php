@@ -30,9 +30,5 @@ use PhpParser\Node;
 
 interface NodeNameInterface extends ConfigurableInterface
 {
-    /**
-     * @param Node\Name $name
-     * @return Node\Name|null
-     */
-    public function filter(Node\Name $name);
+    public function filter(Node\Name $name): ?Node\Name;
 }

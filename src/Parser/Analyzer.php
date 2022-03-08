@@ -64,12 +64,7 @@ class Analyzer implements AnalyzerInterface
         $this->nodeTraverser = $nodeTraverser;
         $this->logger = $logger;
 
-        $this->collection = new AnalysisCollection;
-    }
-
-    public function getNodeTraverser()
-    {
-        return $this->nodeTraverser;
+        $this->collection = new AnalysisCollection();
     }
 
     public function getLogger()
@@ -102,5 +97,12 @@ class Analyzer implements AnalyzerInterface
     public function getAnalysisCollection()
     {
         return $this->collection;
+    }
+
+    public function setupVisitors(array $visitors): void
+    {
+        foreach ($visitors as $visitor) {
+            $this->nodeTraverser->addVisitor($visitor);
+        }
     }
 }

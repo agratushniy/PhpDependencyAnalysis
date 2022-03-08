@@ -38,9 +38,6 @@ use PhpDA\Reference\ValidatorInterface;
 use PhpParser\Node\Name;
 use Symfony\Component\Finder\SplFileInfo;
 
-/**
- * @SuppressWarnings("PMD")
- */
 class Builder implements BuilderInterface
 {
     /** @var Graph */

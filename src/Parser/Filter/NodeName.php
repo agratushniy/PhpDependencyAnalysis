@@ -82,7 +82,7 @@ class NodeName implements NodeNameInterface
         }
     }
 
-    public function filter(Node\Name $name)
+    public function filter(Node\Name $name): ?Node\Name
     {
         if ($this->ignores($name)) {
             return null;

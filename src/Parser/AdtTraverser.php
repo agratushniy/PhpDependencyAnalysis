@@ -32,28 +32,11 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class AdtTraverser extends \PhpParser\NodeTraverser
 {
-    /** @var AdtCollector */
-    private $adtCollector;
-
-    /** @var NameResolver */
-    private $nameResolver;
-
-    /**
-     * @param AdtCollector $adtCollector
-     */
-    public function bindAdtCollector(AdtCollector $adtCollector)
+    public function __construct(private AdtCollector $adtCollector, private NameResolver $nameResolver)
     {
-        $this->adtCollector = $adtCollector;
-        $this->addVisitor($adtCollector);
-    }
-
-    /**
-     * @param NameResolver $nameResolver
-     */
-    public function bindNameResolver(NameResolver $nameResolver)
-    {
-        $this->nameResolver = $nameResolver;
-        $this->addVisitor($nameResolver);
+        parent::__construct();
+        $this->addVisitor($this->adtCollector);
+        $this->addVisitor($this->nameResolver);
     }
 
     /**

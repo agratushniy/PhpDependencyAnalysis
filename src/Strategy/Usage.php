@@ -27,30 +27,5 @@ namespace PhpDA\Strategy;
 
 class Usage extends AbstractStrategy
 {
-    protected function init()
-    {
-        $this->initNodeTraverser();
-    }
 
-    private function initNodeTraverser()
-    {
-        $requiredVisitors = [
-            'PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector',
-            'PhpDA\Parser\Visitor\Required\MetaNamespaceCollector',
-            'PhpDA\Parser\Visitor\Required\UsedNamespaceCollector',
-        ];
-
-        $nodeTraverser = $this->getAnalyzer()->getNodeTraverser();
-        $nodeTraverser->setRequiredVisitors($requiredVisitors);
-        $nodeTraverser->bindVisitors(
-            $this->getConfig()->getVisitor(),
-            $this->getConfig()->getVisitorOptions()
-        );
-    }
-
-    public function execute(): bool
-    {
-        // TODO: Implement execute() method.
-        return true;
-    }
 }
