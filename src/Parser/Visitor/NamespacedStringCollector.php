@@ -25,10 +25,9 @@
 
 namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Feature\NamespacedStringCollectorInterface;
 use PhpParser\Node;
 
-class NamespacedStringCollector extends AbstractVisitor implements NamespacedStringCollectorInterface
+class NamespacedStringCollector extends AbstractVisitor
 {
     const NS = '\\';
 

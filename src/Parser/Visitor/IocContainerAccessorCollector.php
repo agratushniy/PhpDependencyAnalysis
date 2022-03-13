@@ -25,10 +25,9 @@
 
 namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Feature\NamespacedStringCollectorInterface;
 use PhpParser\Node;
 
-class IocContainerAccessorCollector extends AbstractVisitor implements NamespacedStringCollectorInterface
+class IocContainerAccessorCollector extends AbstractVisitor
 {
     public function leaveNode(Node $node)
     {

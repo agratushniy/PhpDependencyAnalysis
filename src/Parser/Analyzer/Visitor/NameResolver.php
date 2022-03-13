@@ -23,9 +23,9 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Parser\Visitor\Required;
+namespace PhpDA\Parser\Analyzer\Visitor;
 
-use PhpDA\Parser\NameContext;
+use PhpDA\Parser\Analyzer\NameContext;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Compound;

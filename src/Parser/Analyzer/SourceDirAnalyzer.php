@@ -23,12 +23,12 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Parser;
+namespace PhpDA\Parser\Analyzer;
 
 use PhpDA\Entity\Analysis;
 use PhpDA\Entity\AnalysisCollection;
+use PhpDA\Parser\Logger;
 use PhpParser\Parser;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Throwable;

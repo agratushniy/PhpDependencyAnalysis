@@ -13,9 +13,9 @@ use PhpDA\Parser\Filter\NodeNameFilterInterface;
 use PhpDA\Parser\Filter\PhpInternalFunctionsFilter;
 use PhpDA\Parser\Filter\TaggedFilter;
 use PhpDA\Parser\NameTransformer\SliceTransformer;
-use PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector;
-use PhpDA\Parser\Visitor\Required\UsedNamespaceCollector;
-use PhpDA\Strategy\Strategy;
+use PhpDA\Parser\Visitor\DeclaredNamespaceCollector;
+use PhpDA\Parser\Visitor\UsedNamespaceCollector;
+use PhpDA\Parser\Strategy\Strategy;
 use PhpDA\Writer\Strategy\Svg;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -46,15 +46,10 @@ return function(ContainerConfigurator $configurator) {
             ->set('groups', [
                 [
                     'title' => 'Mamba common',
-                    'tag' => 'business',
                     'items' => [
                         'Mamba\Context',
                         'Mamba\CommandBus'
                     ]
-                ],
-                [
-                    'tag' => 'business',
-                    'color' => '#FFFFFFF'
                 ],
                 [
                     'title' => 'Comments',

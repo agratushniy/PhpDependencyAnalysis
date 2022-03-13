@@ -25,10 +25,9 @@
 
 namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Feature\UnsupportedNamespaceCollectorInterface;
 use PhpParser\Node;
 
-class UnsupportedFuncCollector extends AbstractVisitor implements UnsupportedNamespaceCollectorInterface
+class UnsupportedFuncCollector extends AbstractVisitor
 {
     /** @var array */
     private $unsupportedFuncs = [

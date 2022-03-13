@@ -25,9 +25,8 @@
 
 namespace PhpDATest\Plugin\Stub;
 
-use PhpDA\Plugin\FactoryInterface;
 
-class OptionFactory implements FactoryInterface
+class OptionFactory
 {
     public function create()
     {

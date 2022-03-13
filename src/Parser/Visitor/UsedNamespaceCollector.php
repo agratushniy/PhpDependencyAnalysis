@@ -23,52 +23,21 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command;
+namespace PhpDA\Parser\Visitor;
 
-use Composer\Autoload\ClassLoader;
-use PhpDA\Command\MessageInterface as Message;
-use PhpDA\Plugin\FactoryInterface;
-use PhpDA\Plugin\Loader;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Yaml\Parser;
+use PhpParser\Node;
 
-class ApplicationFactory implements FactoryInterface
+class UsedNamespaceCollector extends AbstractVisitor
 {
-    /** @var ClassLoader */
-    public static $classLoader;
-
-    /**
-     * @param ClassLoader $classLoader
-     */
-    public function __construct(ClassLoader $classLoader)
+    public function leaveNode(Node $node)
     {
-        self::$classLoader = $classLoader;
+        if ($node instanceof Node\Name) {
+            $this->collect($node);
+        }
     }
 
-    /**
-     * @return Application
-     */
-    public function create()
+    protected function addToAdt(Node\Name $name): void
     {
-        $app = new Application(Message::NAME, Version::read());
-        $app->setDefaultCommand(Message::CMD_ANALYZE);
-        $app->add($this->createAnalyzeCommand());
-
-        return $app;
-    }
-
-    /**
-     * @return AnalyzeCommand
-     */
-    protected function createAnalyzeCommand()
-    {
-        $command = new AnalyzeCommand(Message::CMD_ANALYZE);
-
-        $command->setHelp(Message::CMD_ANALYZE_HELP);
-        $command->setDescription(Message::CMD_ANALYZE_DESCR);
-        $command->setConfigParser(new Parser);
-        $command->setStrategyLoader(new Loader);
-
-        return $command;
+        $this->getAdt()->addUsedNamespace($name);
     }
 }

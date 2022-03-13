@@ -25,17 +25,17 @@
 
 namespace PhpDATest\Parser;
 
-use PhpDA\Parser\AdtTraverser;
+use PhpDA\Parser\Analyzer\AdtTraverser;
 
 class AdtTraverserTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AdtTraverser */
     protected $fixture;
 
-    /** @var \PhpDA\Parser\Visitor\Required\AdtCollector | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\Analyzer\Visitor\AdtCollector | \Mockery\MockInterface */
     protected $adtCollector;
 
-    /** @var \PhpDA\Parser\Visitor\Required\NameResolver | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\Analyzer\Visitor\NameResolver | \Mockery\MockInterface */
     protected $nameResolver;
 
     /** @var \Symfony\Component\Finder\SplFileInfo | \Mockery\MockInterface */
@@ -43,9 +43,9 @@ class AdtTraverserTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->adtCollector = \Mockery::mock('PhpDA\Parser\Visitor\Required\AdtCollector');
+        $this->adtCollector = \Mockery::mock('PhpDA\Parser\Analyzer\Visitor\AdtCollector');
         $this->adtCollector->shouldIgnoreMissing();
-        $this->nameResolver = \Mockery::mock('PhpDA\Parser\Visitor\Required\NameResolver');
+        $this->nameResolver = \Mockery::mock('PhpDA\Parser\Analyzer\Visitor\NameResolver');
         $this->nameResolver->shouldIgnoreMissing();
         $this->file = \Mockery::mock('Symfony\Component\Finder\SplFileInfo');
         $this->file->shouldIgnoreMissing();

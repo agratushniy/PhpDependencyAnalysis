@@ -39,6 +39,6 @@ class AnalyzerFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        self::assertInstanceOf('PhpDA\Parser\SourceDirAnalyzer', $this->fixture->create());
+        self::assertInstanceOf('PhpDA\Parser\Analyzer\SourceDirAnalyzer', $this->fixture->create());
     }
 }

@@ -23,9 +23,15 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Strategy;
+namespace PhpDA\Parser\Analyzer;
 
-interface StrategyInterface
+use PhpDA\Entity\AnalysisCollection;
+
+interface AnalyzerInterface
 {
-    public function execute(): void;
+    public function analyze(): AnalysisCollection;
+
+    public function setupVisitors(array $visitors): self;
+
+    public function configureScanner(string $source, string $filePattern, array $ignore = []): self;
 }

@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser\Visitor\Required;
 
-use PhpDA\Parser\Visitor\Required\AdtCollector;
+use PhpDA\Parser\Analyzer\Visitor\AdtCollector;
 
 class AdtCollectorTest extends \PHPUnit_Framework_TestCase
 {

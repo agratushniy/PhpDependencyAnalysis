@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser\Visitor\Required;
 
-use PhpDA\Parser\Visitor\Required\MetaNamespaceCollector;
+use PhpDA\Parser\Visitor\MetaNamespaceCollector;
 
 class MetaNamespaceCollectorTest extends \PHPUnit_Framework_TestCase
 {

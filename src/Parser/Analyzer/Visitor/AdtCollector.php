@@ -23,64 +23,36 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Parser\Analyzer\Visitor;
 
-use Fhaculty\Graph\Graph;
-use PhpDA\Layout\Builder;
-use PhpDA\Mutator\CycleDetector;
-use PhpDA\Mutator\GroupPerNamespaceParts;
-use PhpDA\Parser\AnalyzerFactory;
-use PhpDA\Plugin\FactoryInterface;
-use PhpDA\Plugin\Loader;
-use PhpDA\Writer\Writer;
-use Symfony\Component\Finder\Finder;
+use PhpParser\Node;
+use PhpParser\NodeVisitorAbstract;
 
-/**
- * @SuppressWarnings("PMD.CouplingBetweenObjects")
- */
-abstract class AbstractFactory implements FactoryInterface
+class AdtCollector extends NodeVisitorAbstract
 {
-    /**
-     * @return Finder
-     */
-    protected function createFinder()
+    /** @var Node\Stmt[] */
+    private $stmts = [];
+
+    public function leaveNode(Node $node)
     {
-        return new Finder;
+        if ($node instanceof Node\Stmt\Class_
+            || $node instanceof Node\Stmt\Trait_
+            || $node instanceof Node\Stmt\Interface_
+        ) {
+            $this->stmts[] = $node;
+        }
     }
 
     /**
-     * @return \PhpDA\Parser\SourceDirAnalyzer
+     * @return Node\Stmt[]
      */
-    protected function createAnalyzer()
+    public function getStmts()
     {
-        $analyzerFactory = new AnalyzerFactory;
-
-        return $analyzerFactory->create();
+        return $this->stmts;
     }
 
-    /**
-     * @return Builder
-     */
-    protected function createGraphBuilder()
+    public function flush()
     {
-        $cycleDetector = new CycleDetector;
-
-        return new Builder(new Graph, new GroupPerNamespaceParts, $cycleDetector);
-    }
-
-    /**
-     * @return Writer
-     */
-    protected function createWriteAdapter()
-    {
-        return new Writer($this->createLoader());
-    }
-
-    /**
-     * @return Loader
-     */
-    protected function createLoader()
-    {
-        return new Loader;
+        $this->stmts = [];
     }
 }

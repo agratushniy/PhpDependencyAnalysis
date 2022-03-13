@@ -25,7 +25,6 @@
 
 namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Feature\UsedNamespaceCollectorInterface;
 use PhpParser\Node;
 
 class SuperglobalCollector extends AbstractVisitor

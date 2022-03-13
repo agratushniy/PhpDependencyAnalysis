@@ -23,11 +23,46 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Parser\Visitor\Feature;
+namespace PhpDA\Parser\Analyzer;
 
-/**
- * @deprecated
- */
-interface UsedNamespaceCollectorInterface
+use DomainException;
+use PhpDA\Parser\Analyzer\Visitor\AdtCollector;
+use PhpDA\Parser\Analyzer\Visitor\NameResolver;
+use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use Symfony\Component\Finder\SplFileInfo;
+
+class AdtTraverser extends NodeTraverser
 {
+    public function __construct(private AdtCollector $adtCollector, private NameResolver $nameResolver)
+    {
+        parent::__construct();
+        $this->addVisitor($this->adtCollector);
+        $this->addVisitor($this->nameResolver);
+    }
+
+    /**
+     * @param SplFileInfo $file
+     * @throws DomainException
+     */
+    public function bindFile(SplFileInfo $file)
+    {
+        if (!$this->nameResolver instanceof NameResolver) {
+            throw new DomainException('NameResolver has not been set');
+        }
+
+        $this->nameResolver->setFile($file);
+    }
+
+    /**
+     * @param Node[] $nodes Array of nodes
+     * @return array
+     */
+    public function getAdtStmtsBy(array $nodes)
+    {
+        $this->adtCollector->flush();
+        $this->traverse($nodes);
+
+        return $this->adtCollector->getStmts();
+    }
 }

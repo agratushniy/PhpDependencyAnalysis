@@ -23,24 +23,9 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Parser\Strategy;
 
-class Inheritance extends AbstractStrategy
+interface StrategyInterface
 {
-    protected function init()
-    {
-        $this->initNodeTraverser();
-    }
-
-    private function initNodeTraverser()
-    {
-        $requiredVisitors = [
-            'PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector',
-            'PhpDA\Parser\Visitor\Required\MetaNamespaceCollector',
-        ];
-
-        $nodeTraverser = $this->getAnalyzer()->getNodeTraverser();
-        $nodeTraverser->setRequiredVisitors($requiredVisitors);
-        $nodeTraverser->bindVisitors([], $this->getConfig()->getVisitorOptions());
-    }
+    public function execute(): void;
 }

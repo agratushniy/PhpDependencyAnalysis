@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Required\NameResolver;
+use PhpDA\Parser\Analyzer\Visitor\NameResolver;
 use PhpDA\Parser\Visitor\TagCollector;
 
 class TagCollectorTest extends \PHPUnit_Framework_TestCase

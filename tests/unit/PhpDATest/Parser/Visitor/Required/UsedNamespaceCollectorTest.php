@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser\Visitor\Required;
 
-use PhpDA\Parser\Visitor\Required\UsedNamespaceCollector;
+use PhpDA\Parser\Visitor\UsedNamespaceCollector;
 
 class UsedNamespaceCollectorTest extends \PHPUnit_Framework_TestCase
 {

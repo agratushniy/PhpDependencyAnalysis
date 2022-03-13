@@ -25,8 +25,7 @@
 
 namespace PhpDA\Command;
 
-use PhpDA\HasOutputInterface;
-use PhpDA\Strategy\StrategyInterface;
+use PhpDA\Parser\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -44,11 +43,6 @@ class AnalyzeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-
-            //переделать на логгер
-            if ($this->strategy instanceof HasOutputInterface) {
-                $this->strategy->setOutput($output);
-            }
 
             $this->strategy->execute();
 

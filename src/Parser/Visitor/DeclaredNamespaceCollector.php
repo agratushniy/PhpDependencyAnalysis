@@ -23,18 +23,32 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Parser\Visitor;
 
-class InheritanceFactory extends AbstractFactory
+use PhpParser\Error;
+use PhpParser\Node;
+
+class DeclaredNamespaceCollector extends AbstractVisitor
 {
-    public function create()
+    /**
+     * {@inheritdoc}
+     * @throws \PhpParser\Error
+     */
+    public function leaveNode(Node $node)
     {
-        return new Inheritance(
-            $this->createFinder(),
-            $this->createAnalyzer(),
-            $this->createGraphBuilder(),
-            $this->createWriteAdapter(),
-            $this->createLoader()
-        );
+        if (!$node instanceof Node\Stmt\ClassLike || !$node->name) {
+            return;
+        }
+
+        if (!$this->getAdt()->hasDeclaredGlobalNamespace()) {
+            throw new Error('DeclaredNamespace is already defined', $node->getLine());
+        }
+
+        $this->collect(new Node\Name($node->namespacedName), $node);
+    }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        $this->getAdt()->setDeclaredNamespace($name);
     }
 }

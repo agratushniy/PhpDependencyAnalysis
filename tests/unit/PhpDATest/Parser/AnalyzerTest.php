@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser;
 
-use PhpDA\Parser\SourceDirAnalyzer;
+use PhpDA\Parser\Analyzer\SourceDirAnalyzer;
 
 class AnalyzerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,10 +35,10 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
     /** @var \PhpParser\Parser | \Mockery\MockInterface */
     protected $parser;
 
-    /** @var \PhpDA\Parser\AdtTraverser | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\Analyzer\AdtTraverser | \Mockery\MockInterface */
     protected $adtTraverser;
 
-    /** @var \PhpDA\Parser\NodeTraverser | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\Analyzer\NodeTraverser | \Mockery\MockInterface */
     protected $nodeTraverser;
 
     /** @var \Symfony\Component\Finder\SplFileInfo | \Mockery\MockInterface */
@@ -53,8 +53,8 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
         $this->file = \Mockery::mock('Symfony\Component\Finder\SplFileInfo');
         $this->file->shouldReceive('getContents')->andReturn('foo');
         $this->parser = \Mockery::mock('PhpParser\Parser');
-        $this->adtTraverser = \Mockery::mock('PhpDA\Parser\AdtTraverser');
-        $this->nodeTraverser = \Mockery::mock('PhpDA\Parser\NodeTraverser');
+        $this->adtTraverser = \Mockery::mock('PhpDA\Parser\Analyzer\AdtTraverser');
+        $this->nodeTraverser = \Mockery::mock('PhpDA\Parser\Analyzer\NodeTraverser');
 
         $this->nodeTraverser->shouldReceive('setAnalysis');
 

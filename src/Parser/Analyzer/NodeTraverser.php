@@ -23,13 +23,43 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command\Strategy;
+namespace PhpDA\Parser\Analyzer;
 
-class Call extends Usage
+use PhpDA\Entity\Adt;
+use PhpDA\Entity\AdtAwareInterface;
+
+class NodeTraverser extends \PhpParser\NodeTraverser implements AdtAwareInterface
 {
-    protected function init()
+    private ?Adt $adt;
+
+    public function setAdt(Adt $adt)
     {
-        parent::init();
-        $this->getGraphBuilder()->setCallMode();
+        $this->adt = $adt;
+    }
+
+    public function getAdt(): ?Adt
+    {
+        return $this->adt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAdt(): bool
+    {
+        return $this->adt != null;
+    }
+
+    public function traverse(array $nodes) : array
+    {
+        if ($this->hasAdt()) {
+            foreach ($this->visitors as $visitor) {
+                if ($visitor instanceof AdtAwareInterface) {
+                    $visitor->setAdt($this->getAdt());
+                }
+            }
+        }
+
+        return parent::traverse($nodes);
     }
 }

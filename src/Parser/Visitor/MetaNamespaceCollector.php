@@ -23,9 +23,8 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Parser\Visitor\Required;
+namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\AbstractVisitor;
 use PhpParser\Node;
 
 class MetaNamespaceCollector extends AbstractVisitor

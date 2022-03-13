@@ -25,8 +25,7 @@
 
 namespace PhpDA\Parser\Visitor;
 
-use PhpDA\Parser\Visitor\Feature\UsedNamespaceCollectorInterface;
-use PhpDA\Parser\Visitor\Required\NameResolver;
+use PhpDA\Parser\Analyzer\Visitor\NameResolver;
 use PhpParser\Node;
 
 class TagCollector extends AbstractVisitor

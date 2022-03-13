@@ -30,6 +30,9 @@ use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @deprecated переделать на OutputLogger
+ */
 class Logger extends AbstractLogger
 {
     /** @var array */

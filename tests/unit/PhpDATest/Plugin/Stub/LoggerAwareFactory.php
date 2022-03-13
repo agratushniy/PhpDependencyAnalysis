@@ -25,9 +25,8 @@
 
 namespace PhpDATest\Plugin\Stub;
 
-use PhpDA\Plugin\FactoryInterface;
 
-class LoggerAwareFactory implements FactoryInterface
+class LoggerAwareFactory
 {
     public function create()
     {

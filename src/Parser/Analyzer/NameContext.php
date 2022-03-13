@@ -23,22 +23,39 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Command;
+namespace PhpDA\Parser\Analyzer;
 
+use PhpParser\Node\Name;
 
-class Version
+class NameContext extends \PhpParser\NameContext
 {
-    const VERSION = '@package_version@';
+    /** @var array */
+    private $namespaceAliases = [];
+
+    public function addAlias(Name $name, string $aliasName, int $type, array $errorAttrs = [])
+    {
+        parent::addAlias($name, $aliasName, $type);
+
+        // if ($name instanceof UseUse) {
+        //     $aliasName = $name->alias;
+        //     $type |= $name->type;
+        //
+        //     if (isset($this->aliases[$type][$aliasName])) {
+        //         $this->namespaceAliases[$aliasName] = (string) $this->aliases[$type][$aliasName];
+        //     } elseif (isset($this->aliases[$type][strtolower($aliasName)])) {
+        //         $this->namespaceAliases[$aliasName] = (string) $this->aliases[$type][strtolower($aliasName)];
+        //     }
+        // }
+        if (isset($this->origAliases[$type][$aliasName])) {
+            $this->namespaceAliases[$aliasName] = (string) $this->origAliases[$type][$aliasName];
+        }
+    }
 
     /**
-     * @return string
+     * @return \PhpParser\Node\Name[][]
      */
-    public static function read()
+    public function getNamespaceAliases()
     {
-        if (strpos(self::VERSION, 'package_version') === false) {
-            return self::VERSION;
-        }
-
-        return '';
+        return $this->namespaceAliases;
     }
 }

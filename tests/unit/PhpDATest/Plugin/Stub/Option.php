@@ -27,7 +27,7 @@ namespace PhpDATest\Plugin\Stub;
 
 use PhpDA\Plugin\ConfigurableInterface;
 
-class Option implements ConfigurableInterface
+class Option
 {
     private $options;
 

@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser\Visitor\Required;
 
-use PhpDA\Parser\Visitor\Required\NameResolver;
+use PhpDA\Parser\Analyzer\Visitor\NameResolver;
 
 class NameResolverTest extends \PHPUnit_Framework_TestCase
 {

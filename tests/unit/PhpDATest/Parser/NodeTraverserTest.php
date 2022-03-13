@@ -25,7 +25,7 @@
 
 namespace PhpDATest\Parser;
 
-use PhpDA\Parser\NodeTraverser;
+use PhpDA\Parser\Analyzer\NodeTraverser;
 
 class NodeTraverserTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,8 +40,8 @@ class NodeTraverserTest extends \PHPUnit_Framework_TestCase
 
     /** @var array */
     protected $requiredVisitors = array(
-        'PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector',
-        'PhpDA\Parser\Visitor\Required\UsedNamespaceCollector',
+        'PhpDA\Parser\Visitor\DeclaredNamespaceCollector',
+        'PhpDA\Parser\Visitor\UsedNamespaceCollector',
     );
 
     protected function setUp()
@@ -80,7 +80,7 @@ class NodeTraverserTest extends \PHPUnit_Framework_TestCase
             '\\PhpDA\Parser\Visitor\Required\UsedNamespaceCollector\\',
             '\\bar\baz',
             'baz\baz\\',
-            'PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector',
+            'PhpDA\Parser\Visitor\DeclaredNamespaceCollector',
         );
 
         $this->visitorLoader->shouldReceive('get')->with('foo', null)->andReturn($this->visitor);

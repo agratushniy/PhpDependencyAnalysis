@@ -23,11 +23,11 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Strategy;
+namespace PhpDA\Parser\Strategy;
 
-use PhpDA\GraphBuilder;
+use PhpDA\Parser\GraphBuilder;
 use PhpDA\Mutator\GraphMutatorInterface;
-use PhpDA\Parser\AnalyzerInterface;
+use PhpDA\Parser\Analyzer\AnalyzerInterface;
 use PhpDA\Writer\WriterInterface;
 
 class Strategy implements StrategyInterface

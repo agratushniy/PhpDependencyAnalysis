@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDA;
+namespace PhpDA\Parser;
 
 use Doctrine\Common\Collections\Collection;
 use Fhaculty\Graph\Attribute\AttributeAware;

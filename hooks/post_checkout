@@ -1,6 +1,0 @@
-#!/bin/bash
-set -e
-
-echo "[***] Build version"
-
-find . -type f -print0 | xargs -0 sed -i "s/@package_version@/$(git describe --tags --always)/g"
