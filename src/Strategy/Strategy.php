@@ -62,6 +62,6 @@ class Strategy implements StrategyInterface
         }
 
         //Мутированный граф передаем в распаковщик (json, svg ...)
-        $this->graphWriter->write($graph);
+        $this->graphWriter->writeGraphTo($graph, $this->options['target']);
     }
 }

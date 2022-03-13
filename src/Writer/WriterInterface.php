@@ -29,8 +29,5 @@ use Fhaculty\Graph\Graph;
 
 interface WriterInterface
 {
-    /**
-     * @param Graph $graph
-     */
-    public function write(Graph $graph): void;
+    public function writeGraphTo(Graph $graph, string $targetFilePath): void;
 }

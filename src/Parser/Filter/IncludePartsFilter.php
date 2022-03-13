@@ -6,12 +6,12 @@ namespace PhpDA\Parser\Filter;
 
 use PhpParser\Node\Name;
 
-final class IncludePartsFilter implements NodeNameFilterInterface
+class IncludePartsFilter implements NodeNameFilterInterface
 {
     /**
      * @var array|Name[]
      */
-    private array $namespaces;
+    protected array $namespaces;
 
     public function __construct(array $configuration)
     {
@@ -24,6 +24,10 @@ final class IncludePartsFilter implements NodeNameFilterInterface
 
     public function filter(Name $name): bool
     {
+        if (empty($this->namespaces)) {
+            return true;
+        }
+
         foreach ($this->namespaces as $namespace) {
             $rootSeparator = '';
 

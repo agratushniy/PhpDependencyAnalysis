@@ -33,15 +33,15 @@ use PhpDA\Writer\WriterInterface;
 
 abstract class AbstractGraphViz implements WriterInterface
 {
-    public function __construct(protected GraphViz $graphViz, protected LayoutProviderInterface $layoutProvider, protected string $targetFilePath)
+    public function __construct(protected GraphViz $graphViz, protected LayoutProviderInterface $layoutProvider)
     {
     }
 
-    public function write(Graph $graph): void
+    public function writeGraphTo(Graph $graph, string $targetFilePath): void
     {
         $this->bindAttributesBy($graph);
 
-        file_put_contents($this->targetFilePath, $this->toString($graph), LOCK_EX);
+        file_put_contents($targetFilePath, $this->toString($graph), LOCK_EX);
     }
 
     private function bindAttributesBy(Graph $graph): void

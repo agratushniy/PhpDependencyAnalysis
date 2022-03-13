@@ -34,9 +34,11 @@ foreach ($autoloadFiles as $autoloadFile) {
 
 $container = new ContainerBuilder();
 $rootDir = __DIR__ . '/..';
+$configDir = $rootDir . '/config';
+
 $loader = new PhpFileLoader($container, new FileLocator($rootDir));
-$loader->load($rootDir . '/container.php');
-$loader->load($rootDir . '/config.php');
+$loader->load($configDir . '/container.php');
+$loader->load($configDir . '/container.vendor.php');
 $container->addCompilerPass(new RegisterConsoleCommandsPass());
 $container->compile();
 
