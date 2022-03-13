@@ -23,72 +23,11 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Layout;
+namespace PhpDA\Parser\NameTransformer;
 
-interface LayoutInterface
+use PhpParser\Node\Name;
+
+interface NodeNameTransformerInterface
 {
-    /**
-     * @return array
-     */
-    public function getGraph();
-
-    /**
-     * @return array
-     */
-    public function getGroup();
-
-    /**
-     * @return array
-     */
-    public function getEdge();
-
-    /**
-     * @return array
-     */
-    public function getEdgeInvalid();
-
-    /**
-     * @return array
-     */
-    public function getEdgeCycle();
-
-    /**
-     * @return array
-     */
-    public function getEdgeExtend();
-
-    /**
-     * @return array
-     */
-    public function getEdgeImplement();
-
-    /**
-     * @return array
-     */
-    public function getEdgeTraitUse();
-
-    /**
-     * @return array
-     */
-    public function getEdgeUnsupported();
-
-    /**
-     * @return array
-     */
-    public function getEdgeNamespacedString();
-
-    /**
-     * @return array
-     */
-    public function getVertex();
-
-    /**
-     * @return array
-     */
-    public function getVertexNamespacedString();
-
-    /**
-     * @return array
-     */
-    public function getVertexUnsupported();
+    public function transform(Name $name): Name;
 }

@@ -29,7 +29,7 @@ use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use PhpParser\Node\Name;
 
-class GroupGenerator implements GraphMutatorInterface
+class GroupPerNamespaceParts implements GraphMutatorInterface
 {
     /** @var array */
     private $groups = [];
@@ -96,7 +96,7 @@ class GroupGenerator implements GraphMutatorInterface
      */
     private function generateIdFor($group)
     {
-        $id = (sizeof($this->groups) + 1) * -1;
+        $id = (sizeof($this->groups) + 1);
         $this->groups[$id] = $group;
 
         return $id;
@@ -120,5 +120,7 @@ class GroupGenerator implements GraphMutatorInterface
             $groupId = $this->getIdFor(new Name($vertex->getId()));
             $vertex->setGroup($groupId);
         }
+
+        $graph->setAttribute('groups', $this->groups);
     }
 }

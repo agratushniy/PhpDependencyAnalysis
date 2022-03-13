@@ -29,7 +29,7 @@ use PhpDA\Parser\Visitor\Feature\UsedNamespaceCollectorInterface;
 use PhpDA\Parser\Visitor\Required\NameResolver;
 use PhpParser\Node;
 
-class TagCollector extends AbstractVisitor implements UsedNamespaceCollectorInterface
+class TagCollector extends AbstractVisitor
 {
     public function leaveNode(Node $node)
     {
@@ -41,5 +41,10 @@ class TagCollector extends AbstractVisitor implements UsedNamespaceCollectorInte
                 $this->collect($name, $node);
             }
         }
+    }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
     }
 }

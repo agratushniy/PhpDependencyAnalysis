@@ -25,31 +25,31 @@
 
 namespace PhpDATest\Layout;
 
-use PhpDA\Layout\NullLayout;
+use PhpDA\Layout\NullLayoutProvider;
 
 class NullLayoutTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var NullLayout */
+    /** @var NullLayoutProvider */
     protected $fixture;
 
     protected function setUp()
     {
-        $this->fixture = new NullLayout;
+        $this->fixture = new NullLayoutProvider;
     }
 
     public function testAccessGraph()
     {
-        self::assertSame(array(), $this->fixture->getGraph());
+        self::assertSame(array(), $this->fixture->graph());
     }
 
     public function testAccessGroup()
     {
-        self::assertSame(array(), $this->fixture->getGroup());
+        self::assertSame(array(), $this->fixture->group());
     }
 
     public function testAccessEdge()
     {
-        self::assertSame(array(), $this->fixture->getEdge());
+        self::assertSame(array(), $this->fixture->edge());
     }
 
     public function testAccessEdgeExtend()
@@ -79,7 +79,7 @@ class NullLayoutTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessVertex()
     {
-        self::assertSame(array(), $this->fixture->getVertex());
+        self::assertSame(array(), $this->fixture->vertex());
     }
 
     public function testAccessVertexNamespacedString()

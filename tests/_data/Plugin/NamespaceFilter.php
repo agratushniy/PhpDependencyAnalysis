@@ -25,9 +25,12 @@
 
 namespace MyDomain\Plugin;
 
-use PhpDA\Parser\Filter\NamespaceFilterInterface;
+use PhpDA\Parser\Filter\NodeNameFilterInterface;
 
-class NamespaceFilter implements NamespaceFilterInterface
+/**
+ * @deprecated
+ */
+class NamespaceFilter
 {
     public function filter(array $nameParts)
     {

@@ -42,14 +42,14 @@ class AbstractVisitorTest extends \PHPUnit_Framework_TestCase
 
     public function testMutateAndAccessNodeNameFilter()
     {
-        $filter = \Mockery::mock('PhpDA\Parser\Filter\NodeNameInterface');
+        $filter = \Mockery::mock('PhpDA\Parser\NameTransformer\NodeNameTransformerInterface');
         $this->fixture->setNodeNameFilter($filter);
         self::assertSame($filter, $this->fixture->getNodeNameFilter());
     }
 
     public function testMutateAndAccessNodeNameFilterInitial()
     {
-        self::assertInstanceOf('PhpDA\Parser\Filter\NodeName', $this->fixture->getNodeNameFilter());
+        self::assertInstanceOf('PhpDA\Parser\Filter\NodeNameTransformer', $this->fixture->getNodeNameFilter());
     }
 
     public function testMutateAndAccessAdt()
@@ -68,7 +68,7 @@ class AbstractVisitorTest extends \PHPUnit_Framework_TestCase
     public function testAccessNodeNameFilter()
     {
         self::assertInstanceOf(
-            'PhpDA\Parser\Filter\NodeNameInterface',
+            'PhpDA\Parser\NameTransformer\NodeNameTransformerInterface',
             $this->fixture->getNodeNameFilter()
         );
     }
@@ -76,7 +76,7 @@ class AbstractVisitorTest extends \PHPUnit_Framework_TestCase
     public function testDelegatingOptionsToNodeNameFilter()
     {
         $options = array('foo');
-        $filter = \Mockery::mock('PhpDA\Parser\Filter\NodeNameInterface');
+        $filter = \Mockery::mock('PhpDA\Parser\NameTransformer\NodeNameTransformerInterface');
         $filter->shouldReceive('setOptions')->once()->with($options);
         $this->fixture->setNodeNameFilter($filter);
 

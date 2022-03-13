@@ -27,5 +27,5 @@ namespace PhpDA\Strategy;
 
 interface StrategyInterface
 {
-    public function execute(): bool;
+    public function execute(): void;
 }

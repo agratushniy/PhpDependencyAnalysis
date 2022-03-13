@@ -75,4 +75,9 @@ class UnsupportedVarCollector extends AbstractVisitor implements UnsupportedName
         /** @var Node\Expr\Variable $node */
         return ($nodeIsInspectable && $node->name instanceof Node\Expr\Variable);
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

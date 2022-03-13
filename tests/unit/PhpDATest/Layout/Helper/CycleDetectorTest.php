@@ -26,7 +26,7 @@
 namespace PhpDATest\Layout\Helper;
 
 use Fhaculty\Graph\Graph;
-use PhpDA\Layout\Helper\CycleDetector;
+use PhpDA\Mutator\CycleDetector;
 
 class CycleDetectorTest extends \PHPUnit_Framework_TestCase
 {

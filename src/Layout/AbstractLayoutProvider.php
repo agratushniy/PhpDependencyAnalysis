@@ -25,7 +25,7 @@
 
 namespace PhpDA\Layout;
 
-abstract class AbstractLayout implements LayoutInterface
+abstract class AbstractLayoutProvider implements LayoutProviderInterface
 {
     /** @var array */
     private $graph = [
@@ -102,17 +102,17 @@ abstract class AbstractLayout implements LayoutInterface
         $this->graph['label'] = $label;
     }
 
-    public function getGraph()
+    public function graph()
     {
         return $this->graph;
     }
 
-    public function getGroup()
+    public function group()
     {
         return $this->group;
     }
 
-    public function getEdge()
+    public function edge()
     {
         return $this->edge;
     }
@@ -129,41 +129,41 @@ abstract class AbstractLayout implements LayoutInterface
 
     public function getEdgeExtend()
     {
-        return $this->getEdge();
+        return $this->edge();
     }
 
     public function getEdgeImplement()
     {
-        return $this->getEdge();
+        return $this->edge();
     }
 
     public function getEdgeTraitUse()
     {
-        return $this->getEdge();
+        return $this->edge();
     }
 
     public function getEdgeUnsupported()
     {
-        return $this->edgeUnsupported + $this->getEdge();
+        return $this->edgeUnsupported + $this->edge();
     }
 
     public function getEdgeNamespacedString()
     {
-        return $this->edgeNamespacedString + $this->getEdge();
+        return $this->edgeNamespacedString + $this->edge();
     }
 
-    public function getVertex()
+    public function vertex()
     {
         return $this->vertex;
     }
 
     public function getVertexNamespacedString()
     {
-        return $this->vertexNamespacedString + $this->getVertex();
+        return $this->vertexNamespacedString + $this->vertex();
     }
 
     public function getVertexUnsupported()
     {
-        return $this->vertexUnsupported + $this->getVertex();
+        return $this->vertexUnsupported + $this->vertex();
     }
 }

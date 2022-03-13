@@ -28,24 +28,22 @@ namespace PhpDA\Parser\Visitor;
 use DomainException;
 use PhpDA\Entity\Adt;
 use PhpDA\Entity\AdtAwareInterface;
-use PhpDA\Parser\Filter;
-use PhpDA\Parser\Visitor\Feature;
-use PhpDA\Plugin\ConfigurableInterface;
+use PhpDA\Parser\Filter\NodeNameFilterInterface;
+use PhpDA\Parser\NameTransformer\NodeNameTransformerInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use RuntimeException;
 
 /**
  * @SuppressWarnings("PMD.CouplingBetweenObjects")
  */
-abstract class AbstractVisitor extends NodeVisitorAbstract implements AdtAwareInterface, ConfigurableInterface
+abstract class AbstractVisitor extends NodeVisitorAbstract implements AdtAwareInterface
 {
     private ?Adt $adt = null;
-    private ?Filter\NodeNameInterface $nodeNameFilter = null;
 
-    public function setOptions(array $options)
-    {
-        $this->getNodeNameFilter()->setOptions($options);
+    public function __construct(
+        private NodeNameFilterInterface      $namespaceFilter,
+        private NodeNameTransformerInterface $nodeNameTransformer
+    ) {
     }
 
     public function setAdt(Adt $adt)
@@ -63,27 +61,10 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements AdtAwareIn
     }
 
     /**
-     * @param Filter\NodeNameInterface $nodeNameFilter
-     */
-    public function setNodeNameFilter(Filter\NodeNameInterface $nodeNameFilter)
-    {
-        $this->nodeNameFilter = $nodeNameFilter;
-    }
-
-    public function getNodeNameFilter(): Filter\NodeNameInterface
-    {
-        if (!$this->nodeNameFilter instanceof Filter\NodeNameInterface) {
-            $this->setNodeNameFilter(new Filter\NodeName);
-        }
-
-        return $this->nodeNameFilter;
-    }
-
-    /**
      * @param Node\Name $target
-     * @param Node      $source
+     * @param Node $source
      */
-    private function exchange(Node\Name $target, Node $source)
+    private function exchangeAttributes(Node\Name $target, Node $source)
     {
         $attributes = $source->getAttributes();
         foreach ($attributes as $attr => $value) {
@@ -91,78 +72,21 @@ abstract class AbstractVisitor extends NodeVisitorAbstract implements AdtAwareIn
         }
     }
 
-    protected function filter(Node\Name $name): ?Node\Name
+    protected function collect(Node\Name $namespace, Node $node = null): void
     {
-        $raw = clone $name;
+        $copiedNs = clone $namespace;
+        $transformedNamespace = $this->nodeNameTransformer->transform($copiedNs);
 
-        if ($name = $this->getNodeNameFilter()->filter($name)) {
-            $this->exchange($name, $raw);
+        if (!$this->namespaceFilter->filter($transformedNamespace)) {
+            return;
         }
 
-        return $name;
-    }
-
-    protected function collect(Node\Name $name, Node $node = null): void
-    {
-        if ($name = $this->filter($name)) {
-            if (!is_null($node)) {
-                $this->exchange($name, $node);
-            }
-            $adtMutator = $this->getAdtMutator();
-            $this->getAdt()->$adtMutator($name);
-        }
-    }
-
-    /**
-     * @throws RuntimeException
-     */
-    private function getAdtMutator(): string
-    {
-        if ($this->isDeclaredNamespaceCollector()) {
-            return 'setDeclaredNamespace';
+        if (!is_null($node)) {
+            $this->exchangeAttributes($transformedNamespace, $node);
         }
 
-        if ($this->isUsedNamespaceCollector()) {
-            return 'addUsedNamespace';
-        }
-
-        if ($this->isUnsupportedNamespaceCollector()) {
-            return 'addUnsupportedStmt';
-        }
-
-        if ($this->isNamespacedStringCollector()) {
-            return 'addNamespacedString';
-        }
-
-        throw new RuntimeException(
-            sprintf(
-                'Visitor \'%s\' must implement '
-                . 'PhpDA\\Parser\\Visitor\Feature\\DeclaredNamespaceCollectorInterface'
-                . ' or PhpDA\\Parser\\Visitor\Feature\\UsedNamespaceCollectorInterface'
-                . ' or PhpDA\\Parser\\Visitor\Feature\\NamespacedStringCollectorInterface'
-                . ' or PhpDA\\Parser\\Visitor\Feature\\UnsupportedNamespaceCollectorInterface',
-                get_class($this)
-            )
-        );
+        $this->addToAdt($transformedNamespace);
     }
 
-    private function isDeclaredNamespaceCollector(): bool
-    {
-        return $this instanceof Feature\DeclaredNamespaceCollectorInterface;
-    }
-
-    private function isUsedNamespaceCollector(): bool
-    {
-        return $this instanceof Feature\UsedNamespaceCollectorInterface;
-    }
-
-    private function isUnsupportedNamespaceCollector(): bool
-    {
-        return $this instanceof Feature\UnsupportedNamespaceCollectorInterface;
-    }
-
-    private function isNamespacedStringCollector(): bool
-    {
-        return $this instanceof Feature\NamespacedStringCollectorInterface;
-    }
+    protected abstract function addToAdt(Node\Name $name): void;
 }

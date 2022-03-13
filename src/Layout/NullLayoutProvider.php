@@ -23,27 +23,72 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Writer;
+namespace PhpDA\Layout;
 
-use Fhaculty\Graph\Graph;
-
-interface AdapterInterface
+class NullLayoutProvider implements LayoutProviderInterface
 {
-    /**
-     * @param Graph $graph
-     * @return AdapterInterface
-     */
-    public function write(Graph $graph);
+    public function graph()
+    {
+        return [];
+    }
 
-    /**
-     * @param string $fqcn
-     * @return AdapterInterface
-     */
-    public function with($fqcn);
+    public function group()
+    {
+        return [];
+    }
 
-    /**
-     * @param string $file
-     * @return AdapterInterface
-     */
-    public function to($file);
+    public function edge()
+    {
+        return [];
+    }
+
+    public function getEdgeInvalid()
+    {
+        return [];
+    }
+
+    public function getEdgeCycle()
+    {
+        return [];
+    }
+
+    public function getEdgeExtend()
+    {
+        return [];
+    }
+
+    public function getEdgeImplement()
+    {
+        return [];
+    }
+
+    public function getEdgeTraitUse()
+    {
+        return [];
+    }
+
+    public function getEdgeUnsupported()
+    {
+        return [];
+    }
+
+    public function getEdgeNamespacedString()
+    {
+        return [];
+    }
+
+    public function vertex()
+    {
+        return [];
+    }
+
+    public function getVertexNamespacedString()
+    {
+        return [];
+    }
+
+    public function getVertexUnsupported()
+    {
+        return [];
+    }
 }

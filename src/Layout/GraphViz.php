@@ -29,49 +29,19 @@ use Graphp\GraphViz\GraphViz as BaseGraphViz;
 
 class GraphViz extends BaseGraphViz
 {
-    /** @var array */
-    private static $groups = [];
+    public static ?GroupLayoutBuilder $groupLayoutBuilder = null;
 
-    /** @var array */
-    private static $groupLayout = [];
-
-    /**
-     * @param array $groups
-     */
-    public function setGroups(array $groups)
+    public static function setGroupLayoutBuilder(GroupLayoutBuilder $groupLayoutBuilder)
     {
-        self::$groups = $groups;
-    }
-
-    /**
-     * @param array $layout
-     */
-    public function setGroupLayout(array $layout)
-    {
-        self::$groupLayout = $layout;
+        self::$groupLayoutBuilder = $groupLayoutBuilder;
     }
 
     public static function escape($id)
     {
-        if (is_int($id) && array_key_exists($id, self::$groups)) {
-            $id = self::$groups[$id];
-            $id = parent::escape($id);
-            return $id . self::getGroupLayoutScript();
+        if (!is_int($id) || !self::$groupLayoutBuilder || !self::$groupLayoutBuilder->support($id)) {
+            return parent::escape($id);
         }
 
-        return parent::escape($id);
-    }
-
-    /**
-     * @return string
-     */
-    private static function getGroupLayoutScript()
-    {
-        $script = '';
-        foreach (self::$groupLayout as $attr => $val) {
-            $script .= self::EOL . $attr . '=' . parent::escape($val) . ';';
-        }
-
-        return $script;
+        return self::$groupLayoutBuilder->buildLayout($id);
     }
 }

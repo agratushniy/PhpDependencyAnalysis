@@ -47,4 +47,9 @@ class IocContainerAccessorCollector extends AbstractVisitor implements Namespace
             }
         }
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

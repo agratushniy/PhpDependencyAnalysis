@@ -25,11 +25,11 @@
 
 namespace PhpDATest\Writer;
 
-use PhpDA\Writer\Adapter;
+use PhpDA\Writer\Writer;
 
 class AdapterTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Adapter */
+    /** @var Writer */
     protected $fixture;
 
     /** @var \PhpDA\Plugin\LoaderInterface | \Mockery\MockInterface */
@@ -42,7 +42,7 @@ class AdapterTest extends \PHPUnit_Framework_TestCase
     {
         $this->file = __DIR__ . '/' . $this->file;
         $this->loader = \Mockery::mock('PhpDA\Plugin\LoaderInterface');
-        $this->fixture = new Adapter($this->loader);
+        $this->fixture = new Writer($this->loader);
     }
 
     protected function tearDown()

@@ -29,12 +29,17 @@ use PhpDA\Parser\Visitor\AbstractVisitor;
 use PhpDA\Parser\Visitor\Feature\UsedNamespaceCollectorInterface;
 use PhpParser\Node;
 
-class UsedNamespaceCollector extends AbstractVisitor implements UsedNamespaceCollectorInterface
+class UsedNamespaceCollector extends AbstractVisitor
 {
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Name) {
             $this->collect($node);
         }
+    }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        $this->getAdt()->addUsedNamespace($name);
     }
 }

@@ -80,7 +80,7 @@ class Html extends AbstractGraphViz
         $this->setTemplate('<html><body>' . $this->getImagePlaceholder() . '</body></html>');
     }
 
-    protected function toString(Graph $graph)
+    protected function toString(Graph $graph): string
     {
         return str_replace(
             $this->getImagePlaceholder(),

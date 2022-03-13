@@ -37,4 +37,9 @@ class UnsupportedGlobalCollector extends AbstractVisitor implements UnsupportedN
             $this->collect($name, $node);
         }
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

@@ -25,25 +25,14 @@
 
 namespace PhpDA\Parser;
 
-use Symfony\Component\Finder\SplFileInfo;
+use PhpDA\Entity\AnalysisCollection;
+use Psr\Log\LoggerInterface;
 
 interface AnalyzerInterface
 {
-    /**
-     * @param SplFileInfo $file
-     * @return \PhpDA\Entity\Analysis
-     */
-    public function analyze(SplFileInfo $file);
+    public function analyze(): AnalysisCollection;
 
-    public function setupVisitors(array $visitors): void;
+    public function setupVisitors(array $visitors): self;
 
-    /**
-     * @return \PhpDA\Entity\AnalysisCollection
-     */
-    public function getAnalysisCollection();
-
-    /**
-     * @return Logger
-     */
-    public function getLogger();
+    public function configureScanner(string $source, string $filePattern, array $ignore = []): self;
 }

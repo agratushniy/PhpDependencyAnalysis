@@ -37,4 +37,9 @@ class UnsupportedEvalCollector extends AbstractVisitor implements UnsupportedNam
             $this->collect($name, $node);
         }
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

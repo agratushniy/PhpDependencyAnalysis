@@ -29,7 +29,10 @@ use Fhaculty\Graph\Graph;
 use PhpDA\Plugin\LoaderInterface;
 use PhpDA\Writer\Strategy\StrategyInterface;
 
-class Adapter implements AdapterInterface
+/**
+ * @deprecated
+ */
+class Writer
 {
     /** @var LoaderInterface */
     private $strategyLoader;

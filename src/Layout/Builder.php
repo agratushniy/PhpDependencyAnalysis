@@ -32,12 +32,15 @@ use Fhaculty\Graph\Vertex;
 use PhpDA\Entity\Adt;
 use PhpDA\Entity\AnalysisCollection;
 use PhpDA\Entity\Location;
-use PhpDA\Layout\Helper\CycleDetector;
-use PhpDA\Mutator\GroupGenerator;
+use PhpDA\Mutator\CycleDetector;
+use PhpDA\Mutator\GroupPerNamespaceParts;
 use PhpDA\Reference\ValidatorInterface;
 use PhpParser\Node\Name;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * @deprecated
+ */
 class Builder implements BuilderInterface
 {
     /** @var Graph */
@@ -46,7 +49,7 @@ class Builder implements BuilderInterface
     /** @var boolean */
     private $graphHasViolations = false;
 
-    /** @var GroupGenerator */
+    /** @var GroupPerNamespaceParts */
     private $groupGenerator;
 
     /** @var array */
@@ -64,7 +67,7 @@ class Builder implements BuilderInterface
     /** @var Vertex */
     private $adtRootVertex;
 
-    /** @var LayoutInterface */
+    /** @var LayoutProviderInterface */
     private $layout;
 
     /** @var bool */
@@ -78,16 +81,16 @@ class Builder implements BuilderInterface
 
     /**
      * @param Graph          $graph
-     * @param GroupGenerator $generator
+     * @param GroupPerNamespaceParts $generator
      * @param CycleDetector  $cycleDetector
      */
-    public function __construct(Graph $graph, GroupGenerator $generator, CycleDetector $cycleDetector)
+    public function __construct(Graph $graph, GroupPerNamespaceParts $generator, CycleDetector $cycleDetector)
     {
         $this->graph = $graph;
         $this->groupGenerator = $generator;
         $this->cycleDetector = $cycleDetector;
 
-        $this->setLayout(new NullLayout);
+        $this->setLayout(new NullLayoutProvider);
         $this->setAnalysisCollection(new AnalysisCollection);
     }
 
@@ -133,9 +136,9 @@ class Builder implements BuilderInterface
     }
 
     /**
-     * @param LayoutInterface $layout
+     * @param LayoutProviderInterface $layout
      */
-    public function setLayout(LayoutInterface $layout)
+    public function setLayout(LayoutProviderInterface $layout)
     {
         $this->layout = $layout;
     }
@@ -176,22 +179,6 @@ class Builder implements BuilderInterface
         }
     }
 
-    private function detectCycles()
-    {
-        $cycledEdges = $this->cycleDetector->inspect($this->getGraph())->getCycledEdges();
-
-        foreach ($cycledEdges as $edge) {
-            /** @var Directed $edge */
-            $edge->setAttribute('belongsToCycle', true);
-            if (!$edge->getAttribute('referenceValidatorMessages')) {
-                $this->bindLayoutTo($edge, $this->layout->getEdgeCycle());
-            }
-            $this->graphHasViolations = true;
-        }
-
-        $this->getGraph()->setAttribute('cycles', $this->cycleDetector->getCycles());
-    }
-
     /**
      * @param Adt $adt
      */
@@ -206,7 +193,7 @@ class Builder implements BuilderInterface
         if ($this->isCallMode) {
             $this->createEdgesFor(
                 $adt->getCalledNamespaces(),
-                $this->layout->getEdge()
+                $this->layout->edge()
             );
         } else {
             $this->createEdgesFor(
@@ -226,7 +213,7 @@ class Builder implements BuilderInterface
 
             $this->createEdgesFor(
                 $adt->getUsedNamespaces(),
-                $this->layout->getEdge()
+                $this->layout->edge()
             );
         }
 
@@ -256,7 +243,7 @@ class Builder implements BuilderInterface
             $vertex->setAttribute('graphviz.group', $groupId);
         }
 
-        $this->bindLayoutTo($vertex, $this->layout->getVertex());
+        $this->bindLayoutTo($vertex, $this->layout->vertex());
 
         return $vertex;
     }

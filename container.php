@@ -1,29 +1,26 @@
 <?php
 
 use Fhaculty\Graph\Graph;
-use PhpDA\Command\Analyze;
-use PhpDA\Mutator\GraphMutatorInterface;
+use PhpDA\Layout\Aggregation;
+use PhpDA\Layout\GraphViz;
+use PhpDA\Layout\GroupLayoutBuilder;
+use PhpDA\Layout\LayoutProviderInterface;
+use PhpDA\Mutator\GroupByCustomConfiguration;
+use PhpDA\Parser\Filter\IncludePartsFilter;
+use PhpDA\Parser\NameTransformer\SliceTransformer;
 use PhpDA\Parser\Visitor\Required\DeclaredNamespaceCollector;
-use PhpDA\Parser\Visitor\Required\MetaNamespaceCollector;
 use PhpDA\Parser\Visitor\Required\UsedNamespaceCollector;
-use PhpDA\Strategy\StrategyInterface;
-use PhpDA\Strategy\Usage;
-use PhpParser\Parser\Php7;
+use PhpDA\Strategy\Strategy;
+use PhpDA\Writer\Strategy\Svg;
 use PhpParser\ParserFactory;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBag;
-use Symfony\Component\DependencyInjection\ParameterBag\EnvPlaceholderParameterBag;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_locator;
 
 return function(ContainerConfigurator $configurator) {
     $services = $configurator->services()
@@ -32,23 +29,22 @@ return function(ContainerConfigurator $configurator) {
         ->autoconfigure()
     ;
 
+    $services
+        ->instanceof(Command::class)
+        ->tag('console_command')
+    ;
+
     $configurator
         ->parameters()
             ->set('options', [
-                'source' => './src',
+                'source' => '/mamba/modules/uni-comments',
                 'filePattern' => '*.php',
-                'target' => 'phpda.svg',
-                'groupLength' => 0,
+                'target' => 'phpda.svg'
             ])
     ;
 
     $services->load('PhpDA\\', 'src/*');
     $services->load('PhpParser\\', 'vendor/nikic/php-parser/lib/PhpParser/*');
-
-    $services
-        ->instanceof(Command::class)
-        ->tag('console_command')
-    ;
 
     # Vendor deps
     $services->set(Finder::class);
@@ -61,19 +57,30 @@ return function(ContainerConfigurator $configurator) {
     $services->set(Parser::class);
     # Vendor deps
 
+    $services->alias(LayoutProviderInterface::class, Aggregation::class);
     $services
-        #->instanceof(StrategyInterface::class)
-        ->set(Usage::class)
+        ->set(Aggregation::class)
+        ->args(['Mamba graph'])
+    ;
+
+    $services
+        ->set(Strategy::class)
         ->args([
             '$visitors' => [
                 service(DeclaredNamespaceCollector::class),
-                service(MetaNamespaceCollector::class),
+                #service(MetaNamespaceCollector::class),
                 service(UsedNamespaceCollector::class)
             ],
             '$options' => '%options%',
-            '$graphMutators' => tagged_iterator('graph_mutator')
+            '$graphMutators' => tagged_iterator('graph_mutator'),
+            '$graphWriter' => service(Svg::class)
         ])
-        ->tag('strategy', ['key' => 'usage']);
+        ->tag('strategy')
+    ;
+
+    $services
+        ->set(Svg::class)
+        ->arg('$targetFilePath', '/app/phpda.svg');
 
     $services
         ->set(Application::class)
@@ -81,12 +88,53 @@ return function(ContainerConfigurator $configurator) {
     ;
 
     $services
-        ->set(Analyze::class)
-        ->args([
-            tagged_iterator('strategy', 'key')
+        ->set(GraphViz::class)
+        ->call('setGroupLayoutBuilder', [service(GroupLayoutBuilder::class)]);
+
+
+    $services
+        ->set(IncludePartsFilter::class)
+        ->arg('$configuration', [
+            'Mamba\Comments',
+            'Hitlist',
+            'Anketa'
         ]);
 
     $services
-        ->instanceof(GraphMutatorInterface::class)
-        ->tag('graph_mutator');
+        ->set(GroupByCustomConfiguration::class)
+        ->args([
+            '$groupsConfiguration' => [
+                [
+                    'title' => 'Group 1',
+                    'items' => [
+                        'Mamba\Context',
+                        'Mamba\CommandBus'
+                    ]
+                ],
+                [
+                    'title' => 'Comments',
+                    'items' => [
+                        'Mamba\Comments'
+                    ]
+                ],
+                [
+                    'title' => 'Hitlist',
+                    'items' => [
+                        'Hitlist'
+                    ]
+                ],
+                [
+                    'title' => 'Anketa',
+                    'items' => [
+                        'Anketa\\'
+                    ]
+                ]
+            ]
+        ])
+        ->tag('graph_mutator')
+    ;
+
+    $services
+        ->set(SliceTransformer::class)
+        ->arg('$options', ['offset' => 0, 'length' => 2]);
 };

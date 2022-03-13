@@ -25,11 +25,11 @@
 
 namespace PhpDATest\Parser\Filter;
 
-use PhpDA\Parser\Filter\NodeName;
+use PhpDA\Parser\Filter\NodeNameTransformer;
 
 class NodeNameTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var NodeName */
+    /** @var NodeNameTransformer */
     protected $fixture;
 
     /** @var \PhpParser\Node\Name | \Mockery\MockInterface */
@@ -41,7 +41,7 @@ class NodeNameTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->createEntityMock();
-        $this->fixture = new NodeName;
+        $this->fixture = new NodeNameTransformer;
     }
 
     protected function createEntityMock()
@@ -204,7 +204,7 @@ class NodeNameTest extends \PHPUnit_Framework_TestCase
 
     public function testFilteringNamespace()
     {
-        $filter = \Mockery::mock('PhpDA\Parser\Filter\NamespaceFilterInterface');
+        $filter = \Mockery::mock('PhpDA\Parser\Filter\NodeNameFilterInterface');
         $this->fixture->setOptions(array('namespaceFilter' => $filter));
 
         $string = 'Foo\Bar\Baz';

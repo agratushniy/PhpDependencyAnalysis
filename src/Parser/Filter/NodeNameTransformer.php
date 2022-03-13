@@ -25,9 +25,10 @@
 
 namespace PhpDA\Parser\Filter;
 
+use PhpDA\Parser\NameTransformer\NodeNameTransformerInterface;
 use PhpParser\Node;
 
-class NodeName implements NodeNameInterface
+class NodeNameTransformer
 {
     const AGGREGATION_INDICATOR = 'slice';
 
@@ -46,7 +47,7 @@ class NodeName implements NodeNameInterface
     /** @var string */
     private $excludePattern;
 
-    /** @var NameSpaceFilterInterface | null */
+    /** @var NodeNameFilterInterface | null */
     private $namespaceFilter;
 
     /**
@@ -76,7 +77,7 @@ class NodeName implements NodeNameInterface
         }
 
         if (isset($options['namespaceFilter'])
-            && $options['namespaceFilter'] instanceof NamespaceFilterInterface
+            && $options['namespaceFilter'] instanceof NodeNameFilterInterface
         ) {
             $this->namespaceFilter = $options['namespaceFilter'];
         }

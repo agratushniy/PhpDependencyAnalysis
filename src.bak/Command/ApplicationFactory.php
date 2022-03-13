@@ -58,11 +58,11 @@ class ApplicationFactory implements FactoryInterface
     }
 
     /**
-     * @return Analyze
+     * @return AnalyzeCommand
      */
     protected function createAnalyzeCommand()
     {
-        $command = new Analyze(Message::CMD_ANALYZE);
+        $command = new AnalyzeCommand(Message::CMD_ANALYZE);
 
         $command->setHelp(Message::CMD_ANALYZE_HELP);
         $command->setDescription(Message::CMD_ANALYZE_DESCR);

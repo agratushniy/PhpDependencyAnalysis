@@ -29,8 +29,8 @@ use Fhaculty\Graph\Graph;
 
 class Svg extends AbstractGraphViz
 {
-    protected function toString(Graph $graph)
+    protected function toString(Graph $graph): string
     {
-        return $this->getGraphViz()->setFormat('svg')->createImageData($graph);
+        return $this->graphViz->setFormat('svg')->createImageData($graph);
     }
 }

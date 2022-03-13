@@ -28,7 +28,7 @@ namespace PhpDA\Parser\Visitor;
 use PhpDA\Parser\Visitor\Feature\UsedNamespaceCollectorInterface;
 use PhpParser\Node;
 
-class SuperglobalCollector extends AbstractVisitor implements UsedNamespaceCollectorInterface
+class SuperglobalCollector extends AbstractVisitor
 {
     /** @var array */
     private $vars = [
@@ -62,5 +62,10 @@ class SuperglobalCollector extends AbstractVisitor implements UsedNamespaceColle
     private function match(Node\Expr\Variable $var)
     {
         return in_array($var->name, $this->vars);
+    }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
     }
 }

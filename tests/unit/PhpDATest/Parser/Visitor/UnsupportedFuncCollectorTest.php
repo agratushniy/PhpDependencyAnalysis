@@ -35,13 +35,13 @@ class UnsupportedFuncCollectorTest extends \PHPUnit_Framework_TestCase
     /** @var \PhpDA\Entity\Adt | \Mockery\MockInterface */
     protected $adt;
 
-    /** @var \PhpDA\Parser\Filter\NodeNameInterface | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\NameTransformer\NodeNameTransformerInterface | \Mockery\MockInterface */
     protected $nodeNameFilter;
 
     protected function setUp()
     {
         $this->adt = \Mockery::mock('PhpDA\Entity\Adt');
-        $this->nodeNameFilter = \Mockery::mock('PhpDA\Parser\Filter\NodeNameInterface');
+        $this->nodeNameFilter = \Mockery::mock('PhpDA\Parser\NameTransformer\NodeNameTransformerInterface');
 
         $this->fixture = new UnsupportedFuncCollector;
         $this->fixture->setAdt($this->adt);

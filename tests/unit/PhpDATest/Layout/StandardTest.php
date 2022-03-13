@@ -39,19 +39,19 @@ class StandardTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessGraph()
     {
-        $data = $this->fixture->getGraph();
+        $data = $this->fixture->graph();
         self::assertNotEmpty($data);
         self::assertSame('foo', $data['label']);
     }
 
     public function testAccessGroup()
     {
-        self::assertNotEmpty($this->fixture->getGroup());
+        self::assertNotEmpty($this->fixture->group());
     }
 
     public function testAccessEdge()
     {
-        self::assertNotEmpty($this->fixture->getEdge());
+        self::assertNotEmpty($this->fixture->edge());
     }
 
     public function testAccessEdgeExtend()
@@ -81,7 +81,7 @@ class StandardTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessVertex()
     {
-        self::assertNotEmpty($this->fixture->getVertex());
+        self::assertNotEmpty($this->fixture->vertex());
     }
 
     public function testAccessVertexNamespacedString()

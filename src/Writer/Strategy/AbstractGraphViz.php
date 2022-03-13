@@ -25,59 +25,44 @@
 
 namespace PhpDA\Writer\Strategy;
 
+use Fhaculty\Graph\Attribute\AttributeAware;
 use Fhaculty\Graph\Graph;
 use PhpDA\Layout\GraphViz;
+use PhpDA\Layout\LayoutProviderInterface;
+use PhpDA\Writer\WriterInterface;
 
-abstract class AbstractGraphViz implements StrategyInterface
+abstract class AbstractGraphViz implements WriterInterface
 {
-    /** @var GraphViz */
-    private $graphViz;
-
-    public function __construct()
+    public function __construct(protected GraphViz $graphViz, protected LayoutProviderInterface $layoutProvider, protected string $targetFilePath)
     {
-        $this->graphViz = new GraphViz;
     }
 
-    /**
-     * @param GraphViz $graphViz
-     */
-    public function setGraphViz(GraphViz $graphViz)
+    public function write(Graph $graph): void
     {
-        $this->graphViz = $graphViz;
+        $this->bindAttributesBy($graph);
+
+        file_put_contents($this->targetFilePath, $this->toString($graph), LOCK_EX);
     }
 
-    /**
-     * @return GraphViz
-     */
-    public function getGraphViz()
+    private function bindAttributesBy(Graph $graph): void
     {
-        return $this->graphViz;
-    }
+        $this->bindLayoutTo($graph, $this->layoutProvider->graph(), 'graphviz.graph.');
 
-    public function filter(Graph $graph)
-    {
-        $this->bindGroupAttributesBy($graph);
-
-        return $this->toString($graph);
-    }
-
-    /**
-     * @param Graph $graph
-     */
-    private function bindGroupAttributesBy(Graph $graph)
-    {
-        if ($groups = $graph->getAttribute('graphviz.groups')) {
-            $this->getGraphViz()->setGroups($groups);
+        foreach ($graph->getVertices() as $vertex) {
+            $this->bindLayoutTo($vertex, $this->layoutProvider->vertex());
         }
 
-        if ($groupLayout = $graph->getAttribute('graphviz.groupLayout')) {
-            $this->getGraphViz()->setGroupLayout($groupLayout);
+        foreach ($graph->getEdges() as $edge) {
+            $this->bindLayoutTo($edge, $this->layoutProvider->edge());
         }
     }
 
-    /**
-     * @param Graph $graph
-     * @return string
-     */
-    abstract protected function toString(Graph $graph);
+    private function bindLayoutTo(AttributeAware $attributeAware, array $layout, string $prefix = 'graphviz.')
+    {
+        foreach ($layout as $name => $attr) {
+            $attributeAware->setAttribute($prefix . $name, $attr);
+        }
+    }
+
+    abstract protected function toString(Graph $graph): string;
 }

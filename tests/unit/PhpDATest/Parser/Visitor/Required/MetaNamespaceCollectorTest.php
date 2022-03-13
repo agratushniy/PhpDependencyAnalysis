@@ -38,7 +38,7 @@ class MetaNamespaceCollectorTest extends \PHPUnit_Framework_TestCase
     /** @var \PhpDA\Entity\Meta | \Mockery\MockInterface */
     protected $meta;
 
-    /** @var \PhpDA\Parser\Filter\NodeNameInterface | \Mockery\MockInterface */
+    /** @var \PhpDA\Parser\NameTransformer\NodeNameTransformerInterface | \Mockery\MockInterface */
     protected $nodeNameFilter;
 
     /** @var array */
@@ -49,7 +49,7 @@ class MetaNamespaceCollectorTest extends \PHPUnit_Framework_TestCase
         $this->meta = \Mockery::mock('PhpDA\Entity\Meta');
         $this->adt = \Mockery::mock('PhpDA\Entity\Adt');
         $this->adt->shouldReceive('getMeta')->andReturn($this->meta);
-        $this->nodeNameFilter = \Mockery::mock('PhpDA\Parser\Filter\NodeNameInterface');
+        $this->nodeNameFilter = \Mockery::mock('PhpDA\Parser\NameTransformer\NodeNameTransformerInterface');
 
         $this->fixture = new MetaNamespaceCollector;
         $this->fixture->setAdt($this->adt);

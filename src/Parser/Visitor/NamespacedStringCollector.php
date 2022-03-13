@@ -104,4 +104,9 @@ class NamespacedStringCollector extends AbstractVisitor implements NamespacedStr
     {
         return ltrim($string, self::NS);
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

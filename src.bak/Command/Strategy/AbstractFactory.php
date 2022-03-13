@@ -27,12 +27,12 @@ namespace PhpDA\Command\Strategy;
 
 use Fhaculty\Graph\Graph;
 use PhpDA\Layout\Builder;
-use PhpDA\Layout\Helper\CycleDetector;
-use PhpDA\Layout\Helper\GroupGenerator;
+use PhpDA\Mutator\CycleDetector;
+use PhpDA\Mutator\GroupPerNamespaceParts;
 use PhpDA\Parser\AnalyzerFactory;
 use PhpDA\Plugin\FactoryInterface;
 use PhpDA\Plugin\Loader;
-use PhpDA\Writer\Adapter;
+use PhpDA\Writer\Writer;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -49,7 +49,7 @@ abstract class AbstractFactory implements FactoryInterface
     }
 
     /**
-     * @return \PhpDA\Parser\Analyzer
+     * @return \PhpDA\Parser\SourceDirAnalyzer
      */
     protected function createAnalyzer()
     {
@@ -65,15 +65,15 @@ abstract class AbstractFactory implements FactoryInterface
     {
         $cycleDetector = new CycleDetector;
 
-        return new Builder(new Graph, new GroupGenerator, $cycleDetector);
+        return new Builder(new Graph, new GroupPerNamespaceParts, $cycleDetector);
     }
 
     /**
-     * @return Adapter
+     * @return Writer
      */
     protected function createWriteAdapter()
     {
-        return new Adapter($this->createLoader());
+        return new Writer($this->createLoader());
     }
 
     /**

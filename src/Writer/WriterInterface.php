@@ -23,12 +23,14 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Parser\Filter;
+namespace PhpDA\Writer;
 
-use PhpDA\Plugin\ConfigurableInterface;
-use PhpParser\Node;
+use Fhaculty\Graph\Graph;
 
-interface NodeNameInterface extends ConfigurableInterface
+interface WriterInterface
 {
-    public function filter(Node\Name $name): ?Node\Name;
+    /**
+     * @param Graph $graph
+     */
+    public function write(Graph $graph): void;
 }

@@ -29,7 +29,7 @@ use Fhaculty\Graph\Graph;
 
 class Script extends AbstractGraphViz
 {
-    protected function toString(Graph $graph)
+    protected function toString(Graph $graph): string
     {
         return $this->getGraphViz()->createScript($graph);
     }

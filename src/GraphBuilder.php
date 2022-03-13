@@ -14,7 +14,7 @@ use PhpDA\Entity\Location;
 use PhpParser\Node\Name;
 use Symfony\Component\Finder\SplFileInfo;
 
-final class GraphBuilder
+class GraphBuilder
 {
     public function __construct(protected Graph $graph)
     {

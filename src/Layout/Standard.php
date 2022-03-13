@@ -25,7 +25,7 @@
 
 namespace PhpDA\Layout;
 
-class Standard extends AbstractLayout
+class Standard extends AbstractLayoutProvider
 {
     /** @var array */
     private $edgeInherited = [
@@ -35,7 +35,7 @@ class Standard extends AbstractLayout
 
     public function getEdgeExtend()
     {
-        return $this->edgeInherited + $this->getEdge();
+        return $this->edgeInherited + $this->edge();
     }
 
     public function getEdgeImplement()

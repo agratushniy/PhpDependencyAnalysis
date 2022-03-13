@@ -25,11 +25,11 @@
 
 namespace PhpDATest\Parser;
 
-use PhpDA\Parser\Analyzer;
+use PhpDA\Parser\SourceDirAnalyzer;
 
 class AnalyzerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Analyzer */
+    /** @var SourceDirAnalyzer */
     protected $fixture;
 
     /** @var \PhpParser\Parser | \Mockery\MockInterface */
@@ -58,7 +58,7 @@ class AnalyzerTest extends \PHPUnit_Framework_TestCase
 
         $this->nodeTraverser->shouldReceive('setAnalysis');
 
-        $this->fixture = new Analyzer(
+        $this->fixture = new SourceDirAnalyzer(
             $this->parser,
             $this->adtTraverser,
             $this->nodeTraverser,

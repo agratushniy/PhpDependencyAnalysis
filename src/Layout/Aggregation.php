@@ -25,6 +25,6 @@
 
 namespace PhpDA\Layout;
 
-class Aggregation extends AbstractLayout
+class Aggregation extends AbstractLayoutProvider
 {
 }

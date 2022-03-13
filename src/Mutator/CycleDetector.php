@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Layout\Helper;
+namespace PhpDA\Mutator;
 
 use Fhaculty\Graph\Edge\Directed;
 use Fhaculty\Graph\Graph;
@@ -31,39 +31,29 @@ use Fhaculty\Graph\Set\Edges;
 use Graphp\Algorithms\ConnectedComponents;
 use PhpDA\Entity\Cycle;
 
-class CycleDetector
+class CycleDetector implements GraphMutatorInterface
 {
-    /** @var Graph */
-    private $graph;
 
     /** @var Graph[] */
-    private $disconnections;
+    private array $disconnections;
 
     /** @var Cycle[] */
-    private $cycles = [];
+    private array $cycles = [];
 
-    /**
-     * @param Graph $graph
-     * @return CycleDetector
-     */
-    public function inspect(Graph $graph)
+    private function inspect(Graph $graph): void
     {
-        $this->graph = $graph;
-        $this->disconnectGraph();
-        $this->findInDisconnections();
 
-        return $this;
     }
 
-    private function disconnectGraph()
+    private function disconnectGraph(Graph $graph): array
     {
-        $components = new ConnectedComponents($this->graph);
-        $this->disconnections = $components->createGraphsComponents();
+        $components = new ConnectedComponents($graph);
+        return $components->createGraphsComponents();
     }
 
-    private function findInDisconnections()
+    private function findInDisconnections(array $disconnections)
     {
-        foreach ($this->disconnections as $graph) {
+        foreach ($disconnections as $graph) {
             $edges = $graph->getEdges();
             foreach ($edges as $edge) {
                 $this->walkOn($edge);
@@ -109,22 +99,11 @@ class CycleDetector
         $this->cycles[] = new Cycle($path);
     }
 
-    /**
-     * @return Cycle[]
-     */
-    public function getCycles()
-    {
-        return $this->cycles;
-    }
-
-    /**
-     * @return Edges
-     */
-    public function getCycledEdges()
+    private function getCycledEdges(Graph $graph): Edges
     {
         $allCycleEdges = [];
 
-        foreach ($this->getCycles() as $cycle) {
+        foreach ($this->cycles as $cycle) {
             $cycledEdges = $cycle->getEdges();
             foreach ($cycledEdges as $cycledEdge) {
                 if (!in_array($cycledEdge, $allCycleEdges)) {
@@ -133,7 +112,7 @@ class CycleDetector
             }
         }
 
-        return $this->graph->getEdges()->getEdgesMatch(
+        return $graph->getEdges()->getEdgesMatch(
             function (Directed $edge) use ($allCycleEdges) {
                 $search = [
                     $edge->getVertexStart()->getId(),
@@ -142,5 +121,19 @@ class CycleDetector
                 return in_array($search, $allCycleEdges);
             }
         );
+    }
+
+    public function mutate(Graph $graph): void
+    {
+        $disconnectedComponents = $this->disconnectGraph($graph);
+        $this->findInDisconnections($disconnectedComponents);
+        $cycledEdges = $this->getCycledEdges($graph);
+
+        foreach ($cycledEdges as $edge) {
+            /** @var Directed $edge */
+            $edge->setAttribute('belongsToCycle', true);
+        }
+
+        $graph->setAttribute('cycles', $this->cycles);
     }
 }

@@ -56,10 +56,10 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     /** @var Builder */
     protected $fixture;
 
-    /** @var \PhpDA\Mutator\GroupGenerator | \Mockery\MockInterface */
+    /** @var \PhpDA\Mutator\GroupPerNamespaceParts | \Mockery\MockInterface */
     protected $groupGenerator;
 
-    /** @var \PhpDA\Layout\Helper\CycleDetector | \Mockery\MockInterface */
+    /** @var \PhpDA\Mutator\CycleDetector | \Mockery\MockInterface */
     protected $cycleDetector;
 
     /** @var \Fhaculty\Graph\Graph | \Mockery\MockInterface */
@@ -76,9 +76,9 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->groupGenerator = \Mockery::mock('PhpDA\Mutator\GroupGenerator');
+        $this->groupGenerator = \Mockery::mock('PhpDA\Mutator\GroupPerNamespaceParts');
         $this->graph = \Mockery::mock('Fhaculty\Graph\Graph');
-        $this->cycleDetector = \Mockery::mock('PhpDA\Layout\Helper\CycleDetector');
+        $this->cycleDetector = \Mockery::mock('PhpDA\Mutator\CycleDetector');
         $this->cycleDetector->shouldReceive('inspect')->with($this->graph)->andReturnSelf();
         $this->cycleDetector->shouldReceive('getCycles')->andReturn(array());
         $this->graph->shouldReceive('setAttribute')->with('cycles', array());
@@ -107,7 +107,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testDelegatingLogEntriesAndGraphLayoutGeneratedGroups()
     {
         $this->cycleDetector->shouldReceive('getCycledEdges')->andReturn(array());
-        $layout = \Mockery::mock('PhpDA\Layout\LayoutInterface');
+        $layout = \Mockery::mock('PhpDA\Layout\LayoutProviderInterface');
         $layout->shouldReceive('getGraph')->once()->andReturn(array('bar' => 'foo'));
         $layout->shouldReceive('getGroup')->once()->andReturn(array('bar'));
 
@@ -134,7 +134,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->groupGenerator->shouldReceive('getGroups')->andReturn(array());
         $this->graph->shouldReceive('setAttribute');
 
-        $layout = \Mockery::mock('PhpDA\Layout\LayoutInterface');
+        $layout = \Mockery::mock('PhpDA\Layout\LayoutProviderInterface');
         $layout->shouldReceive('getGraph')->andReturn(array());
         $layout->shouldReceive('getGroup')->andReturn(array());
 

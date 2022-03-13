@@ -25,11 +25,11 @@
 
 namespace PhpDATest\Layout\Helper;
 
-use PhpDA\Mutator\GroupGenerator;
+use PhpDA\Mutator\GroupPerNamespaceParts;
 
 class GroupGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var GroupGenerator */
+    /** @var GroupPerNamespaceParts */
     protected $fixture;
 
     /** @var \PhpParser\Node\Name | \Mockery\MockInterface */
@@ -40,7 +40,7 @@ class GroupGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->namespace = \Mockery::mock('PhpParser\Node\Name');
         $this->namespace->parts = array('Foo', 'Bar', 'Baz');
 
-        $this->fixture = new GroupGenerator;
+        $this->fixture = new GroupPerNamespaceParts;
     }
 
     public function testIdRetrievalWithEmptyGroupLength()

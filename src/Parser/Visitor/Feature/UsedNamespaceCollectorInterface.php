@@ -25,6 +25,9 @@
 
 namespace PhpDA\Parser\Visitor\Feature;
 
+/**
+ * @deprecated
+ */
 interface UsedNamespaceCollectorInterface
 {
 }

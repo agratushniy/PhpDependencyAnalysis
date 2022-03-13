@@ -30,7 +30,7 @@ use PhpDA\Parser\Visitor\Feature\DeclaredNamespaceCollectorInterface;
 use PhpParser\Error;
 use PhpParser\Node;
 
-class DeclaredNamespaceCollector extends AbstractVisitor implements DeclaredNamespaceCollectorInterface
+class DeclaredNamespaceCollector extends AbstractVisitor
 {
     /**
      * {@inheritdoc}
@@ -38,14 +38,19 @@ class DeclaredNamespaceCollector extends AbstractVisitor implements DeclaredName
      */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Node\Stmt\ClassLike) {
-            if (!$node->name) {
-                return;
-            }
-            if (!$this->getAdt()->hasDeclaredGlobalNamespace()) {
-                throw new Error('DeclaredNamespace is already defined', $node->getLine());
-            }
-            $this->collect(new Node\Name($node->namespacedName), $node);
+        if (!$node instanceof Node\Stmt\ClassLike || !$node->name) {
+            return;
         }
+
+        if (!$this->getAdt()->hasDeclaredGlobalNamespace()) {
+            throw new Error('DeclaredNamespace is already defined', $node->getLine());
+        }
+
+        $this->collect(new Node\Name($node->namespacedName), $node);
+    }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        $this->getAdt()->setDeclaredNamespace($name);
     }
 }

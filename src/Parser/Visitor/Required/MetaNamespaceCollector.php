@@ -114,4 +114,9 @@ class MetaNamespaceCollector extends AbstractVisitor
             }
         }
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

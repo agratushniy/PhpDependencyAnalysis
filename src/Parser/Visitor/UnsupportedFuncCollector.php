@@ -66,4 +66,9 @@ class UnsupportedFuncCollector extends AbstractVisitor implements UnsupportedNam
 
         return in_array($name->toString(), $this->unsupportedFuncs);
     }
+
+    protected function addToAdt(Node\Name $name): void
+    {
+        // TODO: Implement addToAdt() method.
+    }
 }

@@ -44,9 +44,9 @@ interface BuilderInterface
     public function setGroupLength($groupLength);
 
     /**
-     * @param LayoutInterface $layout
+     * @param LayoutProviderInterface $layout
      */
-    public function setLayout(LayoutInterface $layout);
+    public function setLayout(LayoutProviderInterface $layout);
 
     /**
      * @param AnalysisCollection $collection

@@ -28,51 +28,35 @@ namespace PhpDA\Parser;
 use PhpDA\Entity\Analysis;
 use PhpDA\Entity\AnalysisCollection;
 use PhpParser\Parser;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Throwable;
 
-class Analyzer implements AnalyzerInterface
+class SourceDirAnalyzer implements AnalyzerInterface
 {
-    /** @var Parser */
-    private $parser;
-
-    /** @var AdtTraverser */
-    private $adtTraverser;
-
-    /** @var NodeTraverser */
-    private $nodeTraverser;
-
-    /** @var Logger */
-    private $logger;
-
-    /** @var AnalysisCollection */
-    private $collection;
-
-    /**
-     * @param Parser        $parser
-     * @param AdtTraverser  $adtTraverser
-     * @param NodeTraverser $nodeTraverser
-     * @param Logger        $logger
-     */
     public function __construct(
-        Parser $parser,
-        AdtTraverser $adtTraverser,
-        NodeTraverser $nodeTraverser,
-        Logger $logger
+        private Parser $parser,
+        private AdtTraverser $adtTraverser,
+        private NodeTraverser $nodeTraverser,
+        private Logger $logger,
+        private Finder $finder
     ) {
-        $this->parser = $parser;
-        $this->adtTraverser = $adtTraverser;
-        $this->nodeTraverser = $nodeTraverser;
-        $this->logger = $logger;
-
-        $this->collection = new AnalysisCollection();
     }
 
-    public function getLogger()
+    public function analyze(): AnalysisCollection
     {
-        return $this->logger;
+        $analysisCollection = new AnalysisCollection();
+
+        foreach ($this->finder->getIterator() as $file) {
+            /** @var SplFileInfo $file */
+            $analysisCollection->attach($this->analyzeFile($file));
+        }
+
+        return $analysisCollection;
     }
 
-    public function analyze(SplFileInfo $file)
+    private function analyzeFile(SplFileInfo $file): Analysis
     {
         $analysis = new Analysis($file);
 
@@ -80,29 +64,39 @@ class Analyzer implements AnalyzerInterface
             if ($stmts = $this->parser->parse($file->getContents())) {
                 $this->adtTraverser->bindFile($file);
                 $adtStmts = $this->adtTraverser->getAdtStmtsBy($stmts);
+
+
                 foreach ($adtStmts as $node) {
                     $this->nodeTraverser->setAdt($analysis->createAdt());
                     $this->nodeTraverser->traverse([$node]);
                 }
             }
-        } catch (\Throwable $error) {
+        } catch (Throwable $error) {
             $this->logger->error($error->getMessage(), [$file]);
         }
-
-        $this->getAnalysisCollection()->attach($analysis);
 
         return $analysis;
     }
 
-    public function getAnalysisCollection()
-    {
-        return $this->collection;
-    }
-
-    public function setupVisitors(array $visitors): void
+    public function setupVisitors(array $visitors): self
     {
         foreach ($visitors as $visitor) {
             $this->nodeTraverser->addVisitor($visitor);
         }
+
+        return $this;
+    }
+
+    public function configureScanner(string $source, string $filePattern, array $ignore = []): self
+    {
+        $this->finder
+            ->files()
+            ->name($filePattern)
+            ->in($source)
+            ->exclude($ignore)
+            ->sortByName()
+        ;
+
+        return $this;
     }
 }

@@ -23,72 +23,11 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Layout;
+namespace PhpDA\Parser\Filter;
 
-class NullLayout implements LayoutInterface
+use PhpParser\Node\Name;
+
+interface NodeNameFilterInterface
 {
-    public function getGraph()
-    {
-        return [];
-    }
-
-    public function getGroup()
-    {
-        return [];
-    }
-
-    public function getEdge()
-    {
-        return [];
-    }
-
-    public function getEdgeInvalid()
-    {
-        return [];
-    }
-
-    public function getEdgeCycle()
-    {
-        return [];
-    }
-
-    public function getEdgeExtend()
-    {
-        return [];
-    }
-
-    public function getEdgeImplement()
-    {
-        return [];
-    }
-
-    public function getEdgeTraitUse()
-    {
-        return [];
-    }
-
-    public function getEdgeUnsupported()
-    {
-        return [];
-    }
-
-    public function getEdgeNamespacedString()
-    {
-        return [];
-    }
-
-    public function getVertex()
-    {
-        return [];
-    }
-
-    public function getVertexNamespacedString()
-    {
-        return [];
-    }
-
-    public function getVertexUnsupported()
-    {
-        return [];
-    }
+    public function filter(Name $name): bool;
 }

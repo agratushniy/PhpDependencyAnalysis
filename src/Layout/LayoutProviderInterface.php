@@ -23,9 +23,72 @@
  * SOFTWARE.
  */
 
-namespace PhpDA\Strategy;
+namespace PhpDA\Layout;
 
-class Usage extends AbstractStrategy
+interface LayoutProviderInterface
 {
+    /**
+     * @return array
+     */
+    public function graph();
 
+    /**
+     * @return array
+     */
+    public function group();
+
+    /**
+     * @return array
+     */
+    public function edge();
+
+    /**
+     * @return array
+     */
+    public function getEdgeInvalid();
+
+    /**
+     * @return array
+     */
+    public function getEdgeCycle();
+
+    /**
+     * @return array
+     */
+    public function getEdgeExtend();
+
+    /**
+     * @return array
+     */
+    public function getEdgeImplement();
+
+    /**
+     * @return array
+     */
+    public function getEdgeTraitUse();
+
+    /**
+     * @return array
+     */
+    public function getEdgeUnsupported();
+
+    /**
+     * @return array
+     */
+    public function getEdgeNamespacedString();
+
+    /**
+     * @return array
+     */
+    public function vertex();
+
+    /**
+     * @return array
+     */
+    public function getVertexNamespacedString();
+
+    /**
+     * @return array
+     */
+    public function getVertexUnsupported();
 }
