@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDA\Layout;
 
-interface GroupLayoutBuilder
+interface LayoutBuilder
 {
     public function support(int $groupId): bool;
 

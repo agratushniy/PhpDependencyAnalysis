@@ -29,9 +29,9 @@ use Graphp\GraphViz\GraphViz as BaseGraphViz;
 
 class GraphViz extends BaseGraphViz
 {
-    public static ?GroupLayoutBuilder $groupLayoutBuilder = null;
+    public static ?LayoutBuilder $groupLayoutBuilder = null;
 
-    public static function setGroupLayoutBuilder(GroupLayoutBuilder $groupLayoutBuilder)
+    public static function setGroupLayoutBuilder(LayoutBuilder $groupLayoutBuilder)
     {
         self::$groupLayoutBuilder = $groupLayoutBuilder;
     }

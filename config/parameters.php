@@ -6,48 +6,19 @@ return [
         'filePattern' => '*.php',
         'target' => '/app/phpda.svg'
     ],
-    'groups' => [
+    'tags_colors' => [
         [
-            'title' => 'Mamba common',
-            'items' => [
-                'Mamba\Context',
-                'Mamba\CommandBus'
-            ]
+            'name' => 'business',
+            'color' => '#Ead8ad'
         ],
         [
-            'title' => 'Comments',
-            'items' => [
-                'Mamba\Comments'
-            ]
-        ],
-        [
-            'title' => 'Hitlist',
-            'items' => [
-                'Hitlist'
-            ]
-        ],
-        [
-            'title' => 'Anketa',
-            'items' => [
-                'Anketa'
-            ]
-        ],
-        [
-            'title' => 'Symfony',
-            'items' => [
-                'Symfony'
-            ]
-        ],
-        [
-            'title' => 'Mamba infrastructure',
-            'items' => [
-                'RabbitMQ'
-            ]
+            'name' => 'infrastructure',
+            'color' => '#D1eaad'
         ]
     ],
     'tagger_groups' => [
         'filter' => [
-            'use_tags' => ['infrastructure', 'business'],
+            'use_tags' => [],
             'root_names' => [
                 'Mamba\Comments'
             ]

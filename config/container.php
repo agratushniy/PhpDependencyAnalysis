@@ -2,9 +2,9 @@
 
 use PhpDA\Layout\Aggregation;
 use PhpDA\Layout\GraphViz;
-use PhpDA\Layout\GroupLayoutBuilder;
+use PhpDA\Layout\LayoutBuilder;
 use PhpDA\Layout\LayoutProviderInterface;
-use PhpDA\Mutator\GroupByCustomConfiguration;
+use PhpDA\Mutator\GroupsByCustomConfiguration;
 use PhpDA\Parser\Filter\ChainOfFilters;
 use PhpDA\Parser\Filter\EmptyNodeNameFilter;
 use PhpDA\Parser\Filter\IgnoredNamespacesFilter;
@@ -68,11 +68,11 @@ return function(ContainerConfigurator $configurator) {
 
     $services
         ->set(GraphViz::class)
-        ->call('setGroupLayoutBuilder', [service(GroupLayoutBuilder::class)]);
+        ->call('setGroupLayoutBuilder', [service(LayoutBuilder::class)]);
 
 
     $services
-        ->set(GroupByCustomConfiguration::class)
+        ->set(GroupsByCustomConfiguration::class)
         ->tag('graph_mutator')
     ;
 

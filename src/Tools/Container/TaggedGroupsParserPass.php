@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDA\Tools\Container;
 
-use PhpDA\Mutator\GroupByCustomConfiguration;
+use PhpDA\Mutator\GroupsByCustomConfiguration;
 use PhpDA\Parser\Filter\TaggedFilter;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-final class TaggedGroupsParserPass implements \Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface
+final class TaggedGroupsParserPass implements CompilerPassInterface
 {
     /**
      * @inheritDoc
@@ -16,22 +17,15 @@ final class TaggedGroupsParserPass implements \Symfony\Component\DependencyInjec
     public function process(ContainerBuilder $container)
     {
         $config = $container->getParameter('tagger_groups');
+        $tagsColorConfig = $container->getParameter('tags_colors');
 
         if (empty($config)) {
             return;
         }
 
-        $groupsDefinition = $container->getDefinition(GroupByCustomConfiguration::class);
-        $groupsConfig = [];
-
-        foreach ($config['items'] as $item) {
-            $groupsConfig[] = [
-                'title' => $item['title'],
-                'items' => $item['items']
-            ];
-        }
-
-        $groupsDefinition->setArgument(0, $groupsConfig);
+        $groupsDefinition = $container->getDefinition(GroupsByCustomConfiguration::class);
+        $groupsDefinition->setArgument(0, $config['items']);
+        $groupsDefinition->setArgument(1, $tagsColorConfig);
 
         $tagsConfig = [];
         $taggedFilterDefinition = $container->getDefinition(TaggedFilter::class);

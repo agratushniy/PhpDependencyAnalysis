@@ -8,13 +8,13 @@ use PhpParser\Node\Name;
 
 final class Group
 {
-    public function __construct(private int $id, private string $title, private array $items)
+    public function __construct(private int $id, private string $title, private string $tag, private array $items)
     {
     }
 
     public static function undefined(int $id): self
     {
-        return new self($id, 'Undefined', []);
+        return new self($id, 'Undefined', '', []);
     }
 
     public function contains(Name $name): bool
@@ -26,6 +26,14 @@ final class Group
         }
 
         return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTag(): string
+    {
+        return $this->tag;
     }
 
     public function getId(): int

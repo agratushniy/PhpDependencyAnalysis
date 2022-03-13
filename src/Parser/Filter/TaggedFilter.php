@@ -30,6 +30,10 @@ final class TaggedFilter extends IncludePartsFilter
 
     public function filter(Name $name): bool
     {
+        if (empty($this->supportedTags)) {
+            return true;
+        }
+
         if ($this->isRootNode($name)) {
             return true;
         }

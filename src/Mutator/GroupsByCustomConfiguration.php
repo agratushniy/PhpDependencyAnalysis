@@ -8,25 +8,29 @@ use Fhaculty\Graph\Graph;
 use Fhaculty\Graph\Vertex;
 use Graphp\GraphViz\GraphViz;
 use PhpDA\Entity\Group;
-use PhpDA\Layout\GroupLayoutBuilder;
+use PhpDA\Layout\LayoutBuilder;
 use PhpDA\Layout\LayoutProviderInterface;
 use PhpParser\Node\Name;
 
-final class GroupByCustomConfiguration implements GraphMutatorInterface, GroupLayoutBuilder
+class GroupsByCustomConfiguration implements GraphMutatorInterface, LayoutBuilder
 {
     /**
      * @var array|Group[]
      */
     private array $groups;
 
-    public function __construct(array $groupsConfiguration, private LayoutProviderInterface $layoutProvider)
-    {
+    public function __construct(
+        array                           $groupsConfiguration,
+        private array                   $tagsLayoutConfig,
+        private LayoutProviderInterface $layoutProvider,
+    ) {
         $this->groups = [
             Group::undefined(0)
         ];
 
         foreach ($groupsConfiguration as $k => $configuration) {
-            $this->groups[] = new Group($k+1, $configuration['title'], $configuration['items']);
+            $this->groups[] =
+                new Group($k + 1, $configuration['title'], $configuration['tag'], $configuration['items']);
         }
     }
 
@@ -76,7 +80,17 @@ final class GroupByCustomConfiguration implements GraphMutatorInterface, GroupLa
             return $layout;
         }
 
-        foreach ($this->layoutProvider->group() as $attr => $val) {
+        $groupLayout = $this->layoutProvider->group();
+
+        foreach ($this->tagsLayoutConfig as $tagConfig) {
+            if ($tagConfig['name'] !== $group->getTag()) {
+                continue;
+            }
+
+            $groupLayout['fillcolor'] = $tagConfig['color'];
+        }
+
+        foreach ($groupLayout as $attr => $val) {
             $layout .= PHP_EOL . $attr . '=' . GraphViz::escape($val) . ';';
         }
 
