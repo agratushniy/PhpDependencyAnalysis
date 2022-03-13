@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDA\Container;
+namespace PhpDA\Tools\Container;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42cfdc23661441facc7ebc004d7f9a22",
+    "content-hash": "957c2ba2076957ed837a434388ea0284",
     "packages": [
         {
             "name": "clue/graph",

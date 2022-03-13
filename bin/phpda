@@ -1,7 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-use PhpDA\Container\RegisterConsoleCommandsPass;
+use PhpDA\Tools\Container\LoadParametersPass;
+use PhpDA\Tools\Container\RegisterConsoleCommandsPass;
+use PhpDA\Tools\Container\TaggedGroupsParserPass;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\Compiler\MergeExtensionConfigurationPass;
@@ -40,6 +42,8 @@ $loader = new PhpFileLoader($container, new FileLocator($rootDir));
 $loader->load($configDir . '/container.php');
 $loader->load($configDir . '/container.vendor.php');
 $container->addCompilerPass(new RegisterConsoleCommandsPass());
+$container->addCompilerPass(new LoadParametersPass());
+$container->addCompilerPass(new TaggedGroupsParserPass());
 $container->compile();
 
 return function (array $context) use ($container) {

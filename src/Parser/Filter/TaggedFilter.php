@@ -15,6 +15,10 @@ final class TaggedFilter extends IncludePartsFilter
 
     private function isRootNode(Name $name): bool
     {
+        if (empty($this->rootNodes)) {
+            return false;
+        }
+
         $this->namespaces = [];
 
         foreach ($this->rootNodes as $node) {

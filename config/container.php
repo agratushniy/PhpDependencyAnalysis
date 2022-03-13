@@ -36,79 +36,6 @@ return function(ContainerConfigurator $configurator) {
         ->tag('console_command')
     ;
 
-    $configurator
-        ->parameters()
-            ->set('options', [
-                'source' => '/mamba/modules/uni-comments',
-                'filePattern' => '*.php',
-                'target' => '/app/phpda.svg'
-            ])
-            ->set('groups', [
-                [
-                    'title' => 'Mamba common',
-                    'items' => [
-                        'Mamba\Context',
-                        'Mamba\CommandBus'
-                    ]
-                ],
-                [
-                    'title' => 'Comments',
-                    'items' => [
-                        'Mamba\Comments'
-                    ]
-                ],
-                [
-                    'title' => 'Hitlist',
-                    'items' => [
-                        'Hitlist'
-                    ]
-                ],
-                [
-                    'title' => 'Anketa',
-                    'items' => [
-                        'Anketa'
-                    ]
-                ],
-                [
-                    'title' => 'Symfony',
-                    'items' => [
-                        'Symfony'
-                    ]
-                ],
-                [
-                    'title' => 'Mamba infrastructure',
-                    'items' => [
-                        'RabbitMQ'
-                    ]
-                ]
-            ])
-            ->set('filter.include', [
-                /*'Mamba\Comments',
-                'Hitlist',
-                'Anketa',
-                'Symfony'*/
-            ])
-            ->set('filter.tags.root_nodes', [
-                'Mamba\Comments',
-            ])
-            ->set('filter.tags.supported', [
-                'framework', 'infrastructure'
-            ])
-            ->set('filter.tags.collection', [
-                'business' => [
-                    'Mamba\Comments',
-                    'Hitlist',
-                    'Anketa'
-                ],
-                'framework' => [
-                    'Symfony'
-                ],
-                'infrastructure' => [
-                    'RabbitMQ'
-                ]
-            ])
-    ;
-
     $services->load('PhpDA\\', 'src/*');
 
     $services
@@ -146,9 +73,6 @@ return function(ContainerConfigurator $configurator) {
 
     $services
         ->set(GroupByCustomConfiguration::class)
-        ->args([
-            '$groupsConfiguration' => '%groups%'
-        ])
         ->tag('graph_mutator')
     ;
 
@@ -165,16 +89,15 @@ return function(ContainerConfigurator $configurator) {
             service(EmptyNodeNameFilter::class),
             service(IgnoredNamespacesFilter::class),
             service(PhpInternalFunctionsFilter::class),
-            #service(IncludePartsFilter::class),
             service(TaggedFilter::class)
         ]);
-    $services
+    /*$services
         ->set(IncludePartsFilter::class)
-        ->arg('$configuration', '%filter.include%');
-    $services
+        ->arg('$configuration', '%filter.include%');*/
+    /*$services
         ->set(TaggedFilter::class)
         ->arg('$supportedTags', '%filter.tags.supported%')
         ->arg('$taggedCollection', '%filter.tags.collection%')
         ->arg('$rootNodes', '%filter.tags.root_nodes%')
-    ;
+    ;*/
 };
