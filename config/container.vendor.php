@@ -3,6 +3,8 @@
 use Fhaculty\Graph\Graph;
 use PhpParser\ParserFactory;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
@@ -17,6 +19,8 @@ return function(ContainerConfigurator $configurator) {
 
     $services->set(Finder::class);
     $services->set(Graph::class);
+    $services->set(ParameterBag::class);
+    $services->alias(ParameterBagInterface::class, ParameterBag::class);
 
     $services
         ->load('PhpParser\\', 'vendor/nikic/php-parser/lib/PhpParser/*')

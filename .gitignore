@@ -2,4 +2,5 @@ vendor
 tests/_output/*
 tests/_support/_generated/*
 !.gitignore
-phpda.yml
+phpda.svg
+parameters.*

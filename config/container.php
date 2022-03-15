@@ -78,7 +78,7 @@ return function(ContainerConfigurator $configurator) {
 
     $services
         ->set(SliceTransformer::class)
-        ->arg('$options', ['offset' => 0, 'length' => 2]);
+        ->arg('$options', ['offset' => '%ns.slice.offset%', 'length' => '%ns.slice.length%']);
 
 
 
