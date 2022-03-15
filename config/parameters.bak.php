@@ -14,18 +14,8 @@ return [
         /*
          * Файл графа (не менять)
          */
-        'target' => '/app/phpda.svg',
+        'target' => '/app/phpda.svg'
     ],
-    /*
-     * Форматирование нэймспейсов
-     *
-     * Mamba\Comments\Application\Command
-     * При offset=0 и length=2 получим - Mamba\Comments
-     * Соответсвенно все правила в группах нужно будет писать исходя, что в твоем распоряжении будет
-     * два первых элемента нэйспейса. Если надо больше, то увеличивай длинну и меняй правила.
-     */
-    'ns.slice.offset' => 0,
-    'ns.slice.length' => 2,
     /*
      * Конфигурация цвета фона и тега. Если не указать, то будет использоваться дефолтный фон.
      */
@@ -118,6 +108,31 @@ return [
                     'RabbitMQ'
                 ]
             ]
+        ]
+    ],
+    'filter.include' => [
+        /*'Mamba\Comments',
+        'Hitlist',
+        'Anketa',
+        'Symfony'*/
+    ],
+    'filter.tags.root_nodes' => [
+        'Mamba\Comments',
+    ],
+    'filter.tags.supported' => [
+        'framework', 'infrastructure'
+    ],
+    'filter.tags.collection' => [
+        'business' => [
+            'Mamba\Comments',
+            'Hitlist',
+            'Anketa'
+        ],
+        'framework' => [
+            'Symfony'
+        ],
+        'infrastructure' => [
+            'RabbitMQ'
         ]
     ]
 ];

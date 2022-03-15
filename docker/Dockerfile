@@ -36,7 +36,5 @@ RUN apt-get install -y \
 RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* ~/.composer
 
-RUN usermod -u 1000 www-data
-RUN chown -R 1000:1000 /var/www
 RUN mkdir /tmp/php-sessions && chmod -R 777 /tmp
 RUN mkdir /var/log/php && chmod -R 777 /var/log/php

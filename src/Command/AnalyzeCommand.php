@@ -27,41 +27,22 @@ namespace PhpDA\Command;
 
 use PhpDA\Parser\Strategy\StrategyInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * @SuppressWarnings("PMD.CouplingBetweenObjects")
  */
 class AnalyzeCommand extends Command
 {
-    public function __construct(private StrategyInterface $strategy, private ParameterBagInterface $parameterBag)
+    public function __construct(private StrategyInterface $strategy)
     {
         parent::__construct('analyze');
-    }
-
-    protected function configure()
-    {
-        $this
-            ->addOption('config', mode: InputOption::VALUE_OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            if ($externalConfig = $input->getOption('config')) {
-                if (!is_readable($externalConfig)) {
-                    throw new InvalidArgumentException(sprintf('Неудается прочитать конфиг %s', $externalConfig));
-                }
-
-                $configData = include_once $externalConfig;
-                foreach ($configData as $key => $value) {
-                    $this->parameterBag->set($key, $value);
-                }
-            }
 
             $this->strategy->execute();
 

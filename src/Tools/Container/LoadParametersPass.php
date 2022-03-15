@@ -17,7 +17,13 @@ final class LoadParametersPass implements CompilerPassInterface
     {
         $filesystemTools = new FilesystemTools();
         $parametersFile = $filesystemTools->getProjectDir() . '/config/parameters.php';
-        $params = include_once $parametersFile;
+        $parametersLocalFile = $filesystemTools->getProjectDir() . '/parameters.local.php';
+
+        if (is_readable($parametersLocalFile)) {
+            $params = include_once $parametersLocalFile;
+        } else {
+            $params = include_once $parametersFile;
+        }
 
         foreach ($params as $key => $value) {
             $container->setParameter($key, $value);
